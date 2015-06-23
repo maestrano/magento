@@ -2,7 +2,7 @@
 
 class Maestrano_Sso_SamlController extends Mage_Core_Controller_Front_Action
 {
-    function _construct()
+    function preDispatch()
     {
         Maestrano::configure('maestrano.json');
     }
@@ -22,6 +22,5 @@ class Maestrano_Sso_SamlController extends Mage_Core_Controller_Front_Action
     {
         $this->getResponse()->setHeader('Content-type', 'application/json', true);
         $this->getResponse()->setBody(Maestrano::toMetadata());
-        $this->getResponse()->sendResponse();
     }
 }

@@ -11,8 +11,8 @@
   "sso": {
     "enabled": true,
     "slo_enabled": true,
-    "init_path": "/maestrano/auth/saml/init.php",
-    "consume_path": "/maestrano/auth/saml/consume.php",
+    "init_path": "/sso/saml/init",
+    "consume_path": "/sso/saml/consume",
     "creation_mode": "virtual"
   },
   "connec": {
