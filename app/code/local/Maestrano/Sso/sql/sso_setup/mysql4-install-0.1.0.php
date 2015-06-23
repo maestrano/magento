@@ -1,16 +1,13 @@
 <?php
 $installer = $this;
-$installer->startSetup();
-$sql=<<<SQLTEXT
-create table tablename(tablename_id int not null auto_increment, name varchar(100), primary key(tablename_id));
-    insert into tablename values(1,'tablename1');
-    insert into tablename values(2,'tablename2');
-		
-SQLTEXT;
 
-$installer->run($sql);
-//demo 
-//Mage::getModel('core/url_rewrite')->setId(null);
-//demo 
+$installer->startSetup();
+
+$installer->getConnection()->addColumn($installer->getTable('admin/user'), 'mno_user', array(
+    'type' => Varien_Db_Ddl_Table::TYPE_VARCHAR,
+    'nullable' => true,
+    'default' => null,
+    'comment' => 'Maestrano Sso Id'
+));
+
 $installer->endSetup();
-	 

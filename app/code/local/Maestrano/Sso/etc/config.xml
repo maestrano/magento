@@ -17,25 +17,28 @@
         </routers>
     </frontend>
     <global>
+        <models>
+            <admin>
+                <rewrite>
+                    <user>Maestrano_Sso_Model_User</user>
+                </rewrite>
+            </admin>
+            <admin_resource>
+                <rewrite>
+                    <user>Maestrano_Sso_Model_Resource_User</user>
+                </rewrite>
+            </admin_resource>
+        </models>
         <resources>
             <sso_setup>
                 <setup>
                     <module>Maestrano_Sso</module>
+                    <class>Mage_Customer_Model_Entity_Setup</class>
                 </setup>
                 <connection>
                     <use>core_setup</use>
                 </connection>
             </sso_setup>
-            <sso_write>
-                <connection>
-                    <use>core_write</use>
-                </connection>
-            </sso_write>
-            <sso_read>
-                <connection>
-                    <use>core_read</use>
-                </connection>
-            </sso_read>
         </resources>
         <events>
             <adminhtml_block_html_before> <!-- identifier of the event we want to catch -->

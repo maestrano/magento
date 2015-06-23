@@ -1,12 +1,12 @@
 {
-  "environment": "test",
+  "environment": "local",
   "app": {
-    "host": "http://127.0.0.1:8080"
+    "host": "http://magento.app.dev.maestrano.io"
   },
   "api": {
     "id": "api_key",
     "key": "api_secret",
-    "group_id": "app-37"
+    "group_id": "magento.app.dev.maestrano.io"
   },
   "sso": {
     "enabled": true,
