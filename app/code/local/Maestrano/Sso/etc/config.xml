@@ -37,7 +37,7 @@
             </sso_setup>
         </resources>
         <events>
-            <adminhtml_block_html_before> <!-- identifier of the event we want to catch -->
+            <adminhtml_controller_action_predispatch_start> <!-- identifier of the event we want to catch -->
                 <observers>
                     <maestrano_sso_model_observer> <!-- identifier of the event handler -->
                         <type>model</type> <!-- class method call type; valid are model, object and singleton -->
@@ -46,7 +46,7 @@
                         <args></args> <!-- additional arguments passed to observer -->
                     </maestrano_sso_model_observer>
                 </observers>
-            </adminhtml_block_html_before>
+            </adminhtml_controller_action_predispatch_start>
         </events>
     </global>
 </config> 
