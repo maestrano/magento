@@ -9,15 +9,25 @@ class Maestrano_Sso_Model_Observer
 
     public function actionPreDispatchAdmin(Varien_Event_Observer $observer)
     {
-        //Mage::dispatchEvent('admin_session_user_login_success', array('user'=>$user));
-        //$user = $observer->getEvent()->getUser();
-        //$user->doSomething();
-
         // Hook Maestrano
-        if(Maestrano::sso()->isSsoEnabled()) {
-            $mnoSession = new Maestrano_Sso_Session($_SESSION);
-            // Check session validity and trigger SSO if not
-            if (!$mnoSession->isValid()) {
+        if (Maestrano::sso()->isSsoEnabled()) {
+
+            // Get the meastrano session
+            $mnoSession = Mage::getSingleton('core/session')->getMnoSession();
+
+            if ($mnoSession == null)
+                echo "Session is null !!";
+            else
+                print_r($mnoSession);
+
+            // Check session is present and valid, then trigger SSO if not
+            if ($mnoSession == null || !$mnoSession->isValid()) {
+                // The session may have bee updated while validation checking
+                if ($mnoSession != null) {
+                    Mage::getSingleton('core/session')->setMnoSession($mnoSession);
+                }
+
+                // Call the init action which will call the SSO server
                 header('Location: ' . Maestrano::sso()->getInitPath());
                 exit;
             }

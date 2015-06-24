@@ -74,6 +74,23 @@ class Maestrano_Sso_Session
      return true;
    }
 
+  /**
+   * Check whether the user infos are instanciated or not
+   *
+   * @return boolean
+   */
+   public function areUserInfosInstanciated()
+   {
+     if ($this->uid != ''
+         && $this->groupUid != ''
+         && $this->sessionToken != ''
+         && $this->recheck != null) {
+       return true;
+     }
+
+     return false;
+   }
+
    /**
     * Return the full url from which session check
     * should be performed
@@ -153,6 +170,16 @@ class Maestrano_Sso_Session
     }
   }
 
+  public function getUser() {
+    $userSession = array();
+    $userSession['uid'] = $this->uid;
+    $userSession['group_uid'] = $this->groupUid;
+    $userSession['session'] = $this->sessionToken;
+    $userSession['session_recheck'] = $this->recheck->format(DateTime::ISO8601);
+
+    return $userSession;
+  }
+
   public function save() {
     // Set values
     $sessObj = array();
@@ -165,6 +192,8 @@ class Maestrano_Sso_Session
     $sessionStr = base64_encode($sessionStr);
 
     $this->httpSession['maestrano'] = $sessionStr;
+
+    return $sessionStr;
   }
 
   public function getUid() {

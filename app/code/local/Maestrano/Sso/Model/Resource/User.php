@@ -48,17 +48,24 @@ class Maestrano_Sso_Model_Resource_User extends Mage_Admin_Model_Resource_User {
      * based on the sso user.
      * If the method returns null then access is denied
      *
-     * @return the ID of the user created, null otherwise
+     * @param Maestrano_Sso_User $mnoUser
+     * @return the the user created, null otherwise
+     * @throws Exception
      */
     public function createLocalUser(Maestrano_Sso_User $mnoUser) {
         $newUser = Mage::getModel('admin/user');
         $newUser->setMnoUid($mnoUser->getUid());
+        $newUser->setUsername(strtolower($mnoUser->getFirstname()).strtolower($mnoUser->getLastname()));
         $newUser->setFirstname($mnoUser->getFirstname());
         $newUser->setLastname($mnoUser->getLastName());
         $newUser->setEmail($mnoUser->getEmail());
         $newUser->setPassword($this->generatePassword());
-
         $newUser->save();
+
+        //Assign Role Id
+        $newUser->setRoleIds(array(1))  //Administrator role id is 1 ,Here you can assign other roles ids
+            ->setRoleUserId($newUser->getUserId())
+            ->saveRelations();
 
         return $newUser;
     }

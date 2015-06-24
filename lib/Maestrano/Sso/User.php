@@ -113,6 +113,14 @@ class Maestrano_Sso_User
 	public function getSsoSession() {
 		return $this->ssoSession;
 	}
+
+	/**
+	 * Return the current user session token
+	 * @param String session token
+	 */
+	public function setSsoSession($ssoSession) {
+		$this->ssoSession = $ssoSession;
+	}
 	
 	/**
 	 * Return when the user session should be remotely checked
@@ -121,6 +129,14 @@ class Maestrano_Sso_User
 	public function getSsoSessionRecheck() {
 		return $this->ssoSessionRecheck;
 	}
+
+	/**
+	 * Set when the user session should be remotely checked
+	 * @param DateTime session check time
+	 */
+	public function setSsoSessionRecheck($ssoSessionRecheck) {
+		$this->ssoSessionRecheck = $ssoSessionRecheck;
+	}
 	
 	/**
 	 * Return the user group UID 
@@ -128,6 +144,14 @@ class Maestrano_Sso_User
 	 */
 	public function getGroupUid() {
 		return $this->groupUid;
+	}
+
+	/**
+	 * Set the user group UID
+	 * @param String group UID
+	 */
+	public function setGroupUid($groupUid) {
+		$this->groupUid = $groupUid;
 	}
 	
 	/**
@@ -153,6 +177,14 @@ class Maestrano_Sso_User
 	 */
 	public function getUid() {
 		return $this->uid;
+	}
+
+	/**
+	 * Set the Maestrano user UID
+	 * @param String user UID
+	 */
+	public function setUid($uid) {
+		$this->uid = $uid;
 	}
 	
 	/**
