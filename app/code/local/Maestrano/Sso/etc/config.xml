@@ -33,11 +33,7 @@
             <sso_setup>
                 <setup>
                     <module>Maestrano_Sso</module>
-                    <class>Mage_Customer_Model_Entity_Setup</class>
                 </setup>
-                <connection>
-                    <use>core_setup</use>
-                </connection>
             </sso_setup>
         </resources>
         <events>
