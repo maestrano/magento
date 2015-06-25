@@ -33,8 +33,36 @@
  */
 class Mage_Adminhtml_DashboardController extends Mage_Adminhtml_Controller_Action
 {
+    /*public function preDispatch() {
+        Maestrano::configure('maestrano.json');
+    }*/
+
     public function indexAction()
     {
+        $indexSessionTest = Mage::getSingleton('core/session')->getIndexSessionTest();
+        Mage::log("## Mage_Adminhtml_DashboardController - indexSessionTest: $indexSessionTest");
+        $valTest = Mage::getSingleton('core/session')->getValTest();
+        Mage::log("## Mage_Adminhtml_DashboardController - valTest: " . $valTest);
+        // Hook Maestrano
+        /*if (Maestrano::sso()->isSsoEnabled()) {
+            Mage::log("## Mage_Adminhtml_DashboardController - SSO is enabled");
+
+            // Get the meastrano session
+            $mnoSession = Mage::getSingleton('core/session')->getMnoSession();
+            $valTest = Mage::getSingleton('core/session')->getValTest();
+            Mage::log("## Mage_Adminhtml_DashboardController - valTest: " . $valTest);
+
+            if ($mnoSession == null)
+                Mage::log("## Mage_Adminhtml_DashboardController - mnoSession is null!!");
+
+            // Check session is present and valid, then trigger SSO if not
+            if ($mnoSession != null && $mnoSession->isValid()) {
+                Mage::log("## Mage_Adminhtml_DashboardController - mnoSession is valid ;)");
+            } else {
+                Mage::log("## Mage_Adminhtml_DashboardController - mnoSession is not valid :(");
+            }
+        }*/
+
         $this->_title($this->__('Dashboard'));
 
         $this->loadLayout();

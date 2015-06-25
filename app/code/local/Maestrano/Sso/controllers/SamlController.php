@@ -27,9 +27,10 @@ class Maestrano_Sso_SamlController extends Mage_Core_Controller_Front_Action
 
                 // Create a new maestrano session and save it in magento session
                 $mnoSession = new Maestrano_Sso_Session($_SESSION, $mnoUser);
-                Mage::getSingleton('admin/session')->setMnoSession($mnoSession);
+                Mage::getSingleton('core/session')->setMnoSession($mnoSession);
+                Mage::getSingleton('core/session')->setValTest('Youpi ;)');
 
-                Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - Saved session (UID): " . $mnoSession->getUid());
+                Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - Saved mnosession (UID): " . $mnoSession->getUid());
 
                 // Find user in db by uid or email
                 $userModel = Mage::getModel('admin/user');
@@ -52,7 +53,9 @@ class Maestrano_Sso_SamlController extends Mage_Core_Controller_Front_Action
                 // If logged in redirect to admin dashboard startup page
                 if ($session->isLoggedIn()) {
                     Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - User is logged in!");
-                    echo $redirectUrl = Mage::getSingleton('adminhtml/url')->getUrl(Mage::getModel('admin/user')->getStartupPageUrl(), array('_current' => false));
+                    $startupPageUrl = Mage::getModel('admin/user')->getStartupPageUrl();
+                    Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - startupPageUrl: " . $startupPageUrl);
+                    echo $redirectUrl = Mage::getSingleton('adminhtml/url')->getUrl($startupPageUrl, array('_current' => false));
                     Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - Redirecting to: " . $redirectUrl);
                     header('Location: ' . $redirectUrl);
                     exit;
