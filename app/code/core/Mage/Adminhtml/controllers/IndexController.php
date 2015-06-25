@@ -33,11 +33,6 @@
  */
 class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
 {
-
-    public function preDispatch() {
-        Maestrano::configure('maestrano.json');
-    }
-
     /**
      * Render specified template
      *
@@ -62,35 +57,6 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
      */
     public function indexAction()
     {
-        Mage::getSingleton('core/session')->setIndexSessionTest('test');
-
-        // Hook Maestrano
-        Mage::log("## Mage_Adminhtml_IndexController - SSO is enabled: " . Maestrano::sso()->isSsoEnabled());
-        if (Maestrano::sso()->isSsoEnabled()) {
-            // Get the meastrano session
-            $mnoSession = Mage::getSingleton('core/session')->getMnoSession();
-            $valTest = Mage::getSingleton('core/session')->getValTest();
-            Mage::log("## Mage_Adminhtml_IndexController - valTest: " . $valTest);
-
-            if ($mnoSession == null)
-                Mage::log("## Mage_Adminhtml_IndexController - mnoSession is null!!");
-
-            // Check session is present and valid, then trigger SSO if not
-            if ($mnoSession == null || !$mnoSession->isValid()) {
-                Mage::log("## Mage_Adminhtml_IndexController - mnoSession is not valid.");
-                Mage::log("## Mage_Adminhtml_IndexController - Redirecting to " . Maestrano::sso()->getInitPath());
-
-                // The session may have bee updated while validation checking
-                Mage::getSingleton('core/session')->setMnoSession($mnoSession);
-
-                // Call the init action which will call the SSO server
-                header('Location: ' . Maestrano::sso()->getInitPath());
-                exit;
-            } else {
-                Mage::log("## Mage_Adminhtml_IndexController - mnoSession is valid ;)");
-            }
-        }
-
         $session = Mage::getSingleton('admin/session');
         $url = $session->getUser()->getStartupPageUrl();
         if ($session->isFirstPageAfterLogin()) {

@@ -11,6 +11,7 @@ class Maestrano_Sso_SamlController extends Mage_Core_Controller_Front_Action
     {
         // Create a Saml request and redirect to the server
         $req = new Maestrano_Saml_Request($_GET);
+        Mage::log("## Maestrano_Sso_SamlController->InitAction - redirecting to: " . $req->getRedirectUrl());
         $this->_redirectUrl($req->getRedirectUrl());
     }
 
