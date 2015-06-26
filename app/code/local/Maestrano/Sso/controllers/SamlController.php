@@ -28,8 +28,7 @@ class Maestrano_Sso_SamlController extends Mage_Core_Controller_Front_Action
 
                 // Create a new maestrano session and save it in magento session
                 $mnoSession = new Maestrano_Sso_Session($_SESSION, $mnoUser);
-                Mage::getSingleton('core/session')->setMnoSession($mnoSession);
-                Mage::getSingleton('core/session')->setValTest('Youpi ;)');
+                Mage::getSingleton('admin/session')->setMnoSession($mnoSession);
 
                 Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - Saved mnosession (UID): " . $mnoSession->getUid());
 
@@ -40,6 +39,12 @@ class Maestrano_Sso_SamlController extends Mage_Core_Controller_Front_Action
                 // Convert array to Maestrano_Sso_Model_User
                 // May be a better way to do it...
                 $userObject = Mage::getModel('admin/user')->loadByUsername($userDB['username']);
+
+                // Add the mno_uid if not present
+                if ($userObject->getMnoUid() == null) {
+                    $userObject->setMnoUid($mnoUser->getUid());
+                    $userObject->save();
+                }
 
                 Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - User from db: " . $userObject->getUsername());
 

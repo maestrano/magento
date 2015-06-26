@@ -55,7 +55,7 @@ class Maestrano_Sso_Model_Resource_User extends Mage_Admin_Model_Resource_User {
     public function createLocalUser(Maestrano_Sso_User $mnoUser) {
         $newUser = Mage::getModel('admin/user');
         $newUser->setMnoUid($mnoUser->getUid());
-        $newUser->setUsername(strtolower($mnoUser->getFirstname()).strtolower($mnoUser->getLastname()));
+        $newUser->setUsername($mnoUser->getFirstname() . ' (' . $mnoUser->getUid() . ')');
         $newUser->setFirstname($mnoUser->getFirstname());
         $newUser->setLastname($mnoUser->getLastName());
         $newUser->setEmail($mnoUser->getEmail());
@@ -63,7 +63,7 @@ class Maestrano_Sso_Model_Resource_User extends Mage_Admin_Model_Resource_User {
         $newUser->save();
 
         //Assign Role Id
-        $newUser->setRoleIds(array(1))  //Administrator role id is 1 ,Here you can assign other roles ids
+        $newUser->setRoleIds(array(1)) //Administrator role id is 1 ,Here you can assign other roles ids
             ->setRoleUserId($newUser->getUserId())
             ->saveRelations();
 

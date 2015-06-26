@@ -123,7 +123,7 @@ class Maestrano_Sso_Session
      * @return boolean the validity of the session
      */
      public function performRemoteCheck($httpClient = null) {
-       echo $json = $this->fetchUrl($this->getSessionCheckUrl(), $httpClient);
+       $json = $this->fetchUrl($this->getSessionCheckUrl(), $httpClient);
        if ($json) {
         $response = json_decode($json,true);
 

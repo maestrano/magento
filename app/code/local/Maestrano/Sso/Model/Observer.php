@@ -13,18 +13,12 @@ class Maestrano_Sso_Model_Observer
      */
     public function actionPreDispatchAdmin(Varien_Event_Observer $observer)
     {
-        $valTest = Mage::getSingleton('core/session')->getValTest();
-        Mage::log("## Maestrano_Sso_Model_Observer - valTest: " . $valTest);
-
         // Hook Maestrano
         Mage::log("## Maestrano_Sso_Model_Observer - SSO is enabled: " . Maestrano::sso()->isSsoEnabled());
         if (Maestrano::sso()->isSsoEnabled()) {
             // Get the meastrano session
-
-            /**
-             * @var $mnoSession Maestrano_Sso_Session
-             */
-            $mnoSession = Mage::getSingleton('core/session')->getMnoSession();
+            /** @var $mnoSession Maestrano_Sso_Session */
+            $mnoSession = Mage::getSingleton('admin/session')->getMnoSession();
 
             if ($mnoSession == null)
                 Mage::log("## Maestrano_Sso_Model_Observer - mnoSession is null!!");
@@ -35,7 +29,7 @@ class Maestrano_Sso_Model_Observer
                 Mage::log("## Maestrano_Sso_Model_Observer - Redirecting to " . Maestrano::sso()->getInitPath());
 
                 // The session may have bee updated while validation checking
-                Mage::getSingleton('core/session')->setMnoSession($mnoSession);
+                Mage::getSingleton('admin/session')->setMnoSession($mnoSession);
 
                 // Call the init action which will call the SSO server
                 header('Location: ' . Maestrano::sso()->getInitPath());
@@ -45,4 +39,22 @@ class Maestrano_Sso_Model_Observer
             }
         }
     }
+
+    /**
+     * @param Varien_Event_Observer $observer
+     */
+    /*public function actionLogoutAdmin(Varien_Event_Observer $observer)
+    {
+        Mage::log("## Maestrano_Sso_Model_Observer - Logging out the admin user");
+
+        /** @var $adminSession Mage_Admin_Model_Session
+        $adminSession = Mage::getSingleton('admin/session');
+        $adminSession->unsetAll();
+        $adminSession->getCookie()->delete($adminSession->getSessionName());
+
+        Mage::app()->getResponse()
+            ->setRedirect(Mage::getBaseUrl())
+            ->sendResponse();
+        exit(0);
+    }*/
 }
