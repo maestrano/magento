@@ -55,7 +55,9 @@ class Maestrano_Sso_Model_Resource_User extends Mage_Admin_Model_Resource_User {
     public function createLocalUser(Maestrano_Sso_User $mnoUser) {
         $newUser = Mage::getModel('admin/user');
         $newUser->setMnoUid($mnoUser->getUid());
-        $newUser->setUsername($mnoUser->getFirstname() . ' (' . $mnoUser->getUid() . ')');
+        // Username must be unique
+        // format "Firstname (uid)" breaks the acl...
+        $newUser->setUsername($mnoUser->getUid());
         $newUser->setFirstname($mnoUser->getFirstname());
         $newUser->setLastname($mnoUser->getLastName());
         $newUser->setEmail($mnoUser->getEmail());

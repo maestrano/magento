@@ -47,16 +47,6 @@
                     </maestrano_sso_model_observer>
                 </observers>
             </adminhtml_controller_action_predispatch_start>
-            <admin_system_config_changed_section_admin> <!-- identifier of the event we want to catch -->
-                <observers>
-                    <maestrano_sso_model_observer> <!-- identifier of the event handler -->
-                        <type>model</type> <!-- class method call type; valid are model, object and singleton -->
-                        <class>Maestrano_Sso_Model_Observer</class> <!-- observers class alias -->
-                        <method>actionLogoutAdmin</method> <!-- observer's method to be called -->
-                        <args></args> <!-- additional arguments passed to observer -->
-                    </maestrano_sso_model_observer>
-                </observers>
-            </admin_system_config_changed_section_admin>
         </events>
     </global>
 </config> 

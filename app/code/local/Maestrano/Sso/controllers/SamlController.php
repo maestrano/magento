@@ -38,10 +38,11 @@ class Maestrano_Sso_SamlController extends Mage_Core_Controller_Front_Action
 
                 // Convert array to Maestrano_Sso_Model_User
                 // May be a better way to do it...
-                $userObject = Mage::getModel('admin/user')->loadByUsername($userDB['username']);
+                $userObject = $userModel->loadByUsername($userDB['username']);
 
                 // Add the mno_uid if not present
                 if ($userObject->getMnoUid() == null) {
+                    Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - Current user mno_uid is null, adding mno_uid: " . $mnoUser->getUid());
                     $userObject->setMnoUid($mnoUser->getUid());
                     $userObject->save();
                 }
