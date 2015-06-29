@@ -39,22 +39,4 @@ class Maestrano_Sso_Model_Observer
             }
         }
     }
-
-    /**
-     * @param Varien_Event_Observer $observer
-     */
-    /*public function actionLogoutAdmin(Varien_Event_Observer $observer)
-    {
-        Mage::log("## Maestrano_Sso_Model_Observer - Logging out the admin user");
-
-        /** @var $adminSession Mage_Admin_Model_Session
-        $adminSession = Mage::getSingleton('admin/session');
-        $adminSession->unsetAll();
-        $adminSession->getCookie()->delete($adminSession->getSessionName());
-
-        Mage::app()->getResponse()
-            ->setRedirect(Mage::getBaseUrl())
-            ->sendResponse();
-        exit(0);
-    }*/
 }
