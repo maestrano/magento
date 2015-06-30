@@ -146,7 +146,7 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
             // Save maestrano id
             if($persist) {
                 Mage::log("Maestrano_Connec_Helper_BaseMappers::saveConnecResource persistLocalModel entity=$this->connec_entity_name");
-                //$this->persistLocalModel($model, $resource_hash);
+                $this->persistLocalModel($model, $resource_hash);
                 $this->findOrCreateIdMap($resource_hash, $model);
             }
 
@@ -167,16 +167,18 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
         $local_id = $model->getId();
         Mage::log("Maestrano_Connec_Helper_BaseMappers::findOrCreateIdMap entity=$this->connec_entity_name, local_id=$local_id, entity_id=" .$resource_hash['id']);
 
+        /** @var Maestrano_Connec_Model_Mnoidmap $mnoIdMapModel */
         $mnoIdMapModel = Mage::getModel('connec/mnoidmap');
 
         if($local_id == 0 || is_null($resource_hash['id'])) { return null; }
 
         $mno_id_map = $mnoIdMapModel->findMnoIdMapByLocalIdAndEntityName($local_id, $this->local_entity_name);
         if(!$mno_id_map) {
-            Mage::log("Maestrano_Connec_Helper_BaseMappers::findOrCreateIdMap map connec resource entity=$this->connec_entity_name, id=" . $resource_hash['id'] . ", local_id=$local_id");
+            Mage::log("Maestrano_Connec_Helper_BaseMappers::findOrCreateIdMap create MnoIdMap entity=$this->connec_entity_name, mno_id=" . $resource_hash['id'] . ", local_id=$local_id");
             return $mnoIdMapModel->addMnoIdMap($local_id, $this->local_entity_name, $resource_hash['id'], $this->connec_entity_name);
         }
 
+        Mage::log("Maestrano_Connec_Helper_BaseMappers::findOrCreateIdMap found MnoIdMap entity=$this->connec_entity_name, mno_id=" . $resource_hash['id'] . ", local_id=$local_id");
         return $mno_id_map;
     }
 
