@@ -46,10 +46,6 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
     }
 
     // Overwrite me!
-    // Return the Model local id
-    abstract protected function getId($model);
-
-    // Overwrite me!
     // Return a local Model by id
     abstract protected function loadModelById($local_id);
 
@@ -131,7 +127,7 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
     public function saveConnecResource($resource_hash, $persist=true, $model=null, $retry=true) {
         if(!$this->validate($resource_hash)) { return null; }
 
-        Mage::log("Maestrano_Connec_Helper_BaseMappers::saveConnecResource entity=$this->connec_entity_name, hash=" . json_encode($resource_hash));
+        Mage::log("Maestrano_Connec_Helper_BaseMappers::saveConnecResource entity=$this->connec_entity_name, hash=" . print_r($resource_hash, 1));
 
         // Load existing Model or create a new instance
         try {
@@ -147,10 +143,10 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
             Mage::log("Maestrano_Connec_Helper_BaseMappers::saveConnecResource mapConnecResourceToModel entity=$this->connec_entity_name");
             $this->mapConnecResourceToModel($resource_hash, $model);
 
-            // Save and map the Model id to the Connec resource id
+            // Save maestrano id
             if($persist) {
                 Mage::log("Maestrano_Connec_Helper_BaseMappers::saveConnecResource persistLocalModel entity=$this->connec_entity_name");
-                $this->persistLocalModel($model, $resource_hash);
+                //$this->persistLocalModel($model, $resource_hash);
                 $this->findOrCreateIdMap($resource_hash, $model);
             }
 
@@ -168,15 +164,17 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
 
     // Map a Connec Resource to an Magento Model
     public function findOrCreateIdMap($resource_hash, $model) {
-        $local_id = $this->getId($model);
+        $local_id = $model->getId();
         Mage::log("Maestrano_Connec_Helper_BaseMappers::findOrCreateIdMap entity=$this->connec_entity_name, local_id=$local_id, entity_id=" .$resource_hash['id']);
+
+        $mnoIdMapModel = Mage::getModel('connec/mnoidmap');
 
         if($local_id == 0 || is_null($resource_hash['id'])) { return null; }
 
-        $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByLocalIdAndEntityName($local_id, $this->local_entity_name);
+        $mno_id_map = $mnoIdMapModel->findMnoIdMapByLocalIdAndEntityName($local_id, $this->local_entity_name);
         if(!$mno_id_map) {
             Mage::log("Maestrano_Connec_Helper_BaseMappers::findOrCreateIdMap map connec resource entity=$this->connec_entity_name, id=" . $resource_hash['id'] . ", local_id=$local_id");
-            return Mage::getModel('connec/mnoidmap')->addMnoIdMap($local_id, $this->local_entity_name, $resource_hash['id'], $this->connec_entity_name);
+            return $mnoIdMapModel->addMnoIdMap($local_id, $this->local_entity_name, $resource_hash['id'], $this->connec_entity_name);
         }
 
         return $mno_id_map;
@@ -188,7 +186,7 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
     public function processLocalUpdate($model, $pushToConnec=true, $delete=false) {
         $pushToConnec = $pushToConnec && Maestrano::param('connec.enabled');
 
-        Mage::log("Maestrano_Connec_Helper_BaseMappers::processLocalUpdate entity=$this->connec_entity_name, local_id=" . $this->getId($model) . ", pushToConnec=$pushToConnec, delete=$delete");
+        Mage::log("Maestrano_Connec_Helper_BaseMappers::processLocalUpdate entity=$this->connec_entity_name, local_id=" . $model->getId() . ", pushToConnec=$pushToConnec, delete=$delete");
 
         if($pushToConnec) {
             $this->pushToConnec($model);
@@ -201,23 +199,24 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
 
     // Find an Magento entity matching the Connec resource or initialize a new one
     protected function findOrInitializeModel($resource_hash) {
-        $model = null;
+        /** @var Maestrano_Connec_Model_Mnoidmap $mnoIdMapModel */
+        $mnoIdMapModel = Mage::getModel('connec/mnoidmap');
 
-        // Find local Model if exists
+        // Find mnoIdMapModel if exists
         $mno_id = $resource_hash['id'];
-        $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByMnoIdAndEntityName($mno_id, $this->connec_entity_name, $this->local_entity_name);
+        $mno_id_map = $mnoIdMapModel->findMnoIdMapByMnoIdAndEntityName($mno_id, $this->connec_entity_name, $this->local_entity_name);
 
-        Mage::log("Maestrano_Connec_Helper_BaseMappers::findOrInitializeModel entity=$this->connec_entity_name, mno_id=$mno_id, mno_id_map=" . json_encode($mno_id_map));
+        Mage::log("Maestrano_Connec_Helper_BaseMappers::findOrInitializeModel entity=$this->connec_entity_name, mno_id=$mno_id, mno_id_map=$mno_id_map");
 
         if($mno_id_map) {
             // Ignore updates for deleted Models
-            if($mno_id_map['deleted_flag'] == 1) {
+            if($mno_id_map->getDeletedFlag() == 1) {
                 Mage::log("Maestrano_Connec_Helper_BaseMappers::findOrInitializeModel ignore update for locally deleted entity=$this->connec_entity_name, mno_id=$mno_id");
                 return null;
             }
 
             // Load the locally mapped Model
-            $model = $this->loadModelById($mno_id_map['app_entity_id']);
+            $model = $this->loadModelById($mno_id_map->getAppEntityId());
         }
 
         // Match a local Model from hash attributes
@@ -238,26 +237,29 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
 
     // Transform an Magento Model into a Connec Resource and push it to Connec
     protected function pushToConnec($model) {
-        Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec entity=$this->connec_entity_name, local_id=" . $this->getId($model));
+        // TODO: Not initializing in constructor
+        $this->_connec_client = new Maestrano_Connec_Client();
+
+        // Find local id
+        $local_id = $model->getId();
+        Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec entity=$this->connec_entity_name, local_id=$local_id");
 
         // Transform the Model into a Connec hash
         $resource_hash = $this->mapModelToConnecResource($model);
         $hash = array($this->connec_resource_name => $resource_hash);
-        Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec generated connec hash " . json_encode($hash));
+        //Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec generated connec hash: " . json_encode($hash));
 
         // Find Connec resource id
-        $local_id = $this->getId($model);
         $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByLocalIdAndEntityName($local_id, $this->local_entity_name);
         if($mno_id_map) {
-            // Update resource
+            // Update resource in connect
             $url = $this->connec_resource_endpoint . '/' . $mno_id_map['mno_entity_guid'];
             Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec updating entity=$this->local_entity_name, url=$url, id=$local_id hash=" . json_encode($hash));
             $response = $this->_connec_client->put($url, $hash);
         } else {
-            // Create resource
+            // Create resource in connect
             $url = $this->connec_resource_endpoint;
             Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec creating entity=$this->local_entity_name, url=$url, hash=" . json_encode($hash));
-            $this->_connec_client = new Maestrano_Connec_Client();
             $response = $this->_connec_client->post($url, $hash);
         }
 
@@ -270,14 +272,14 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
         } else {
             Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec Processing Connec! response code=$code, body=$body");
             $result = json_decode($response['body'], true);
-            Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec processing entity_name=$this->local_entity_name entity=". json_encode($result));
-            return $this->saveConnecResource($result[$this->connec_resource_name], true, $model);
+            $this->findOrCreateIdMap($result[$this->connec_resource_name], $model);
+            //return $this->saveConnecResource($result[$this->connec_resource_name], true, $model);
         }
     }
 
     // Flag the local Model mapping as deleted to ignore further updates
     protected function flagAsDeleted($model) {
-        $local_id = $this->getId($model);
+        $local_id = $model->getId();
         Mage::log("Maestrano_Connec_Helper_BaseMappers::flagAsDeleted entity=$this->connec_entity_name, local_id=$local_id");
         Mage::getModel('connec/mnoidmap')->deleteMnoIdMap($local_id, $this->local_entity_name);
     }

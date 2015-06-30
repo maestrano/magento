@@ -8,12 +8,6 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
         $this->connec_resource_endpoint = 'items';
     }
 
-    // Return the Model local id
-    protected function getId($model)
-    {
-        $model->getId();
-    }
-
     // Return a local Model by id
     public function loadModelById($localId)
     {
@@ -24,27 +18,41 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
     // Map the Connec resource attributes onto the Magento model
     protected function mapConnecResourceToModel($product_hash, $product)
     {
-        // Mandatory fields
-        if ($this->is_set($product_hash['code'])) { $product->setSku($product_hash['code']); }
-        if ($this->is_set($product_hash['name'])) { $product->setName($product_hash['name']); }
-        if ($this->is_set($product_hash['description'])) { $product->setDescription($product_hash['description']); }
-        if ($this->is_set($product_hash['sale_price'])) {
-            if ($this->is_set($product_hash['sale_price']['net_amount'])) { $product->setPrice($product_hash['sale_price']['net_amount']); }
+        // Fiels mapping
+        if (array_key_exists('code', $product_hash)) { $product->setSku($product_hash['code']); }
+        if (array_key_exists('name', $product_hash)) { $product->setName($product_hash['name']); }
+        if (array_key_exists('description', $product_hash)) { $product->setDescription($product_hash['description']); }
+        if (array_key_exists('sale_price', $product_hash)) { $product->setPrice($product_hash['sale_price']); }
+        if (array_key_exists('weight', $product_hash)) { $product->setWeight($product_hash['weight']); }
+        if (array_key_exists('status', $product_hash)) {
+            if ($product_hash['status'] === 'ACTIVE') {
+                $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
+            } else {
+                $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_DISABLED);
+            }
         }
-        if ($this->is_set($product_hash['weight'])) { $product->setWeight($product_hash['weight']); }
-        $this->is_set($product_hash['status'] === 'ACTIVE') ? $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_ENABLED) : $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
-        $this->is_set($product_hash['sale_tax_code_id']) ? $product->setTaxClassId(2) : $product->setTaxClassId(0); //tax class (0 - none, 1 - default, 2 - taxable, 4 - shipping)
+        array_key_exists('sale_tax_code_id', $product_hash) ? $product->setTaxClassId(2) : $product->setTaxClassId(0); //tax class (0 - none, 1 - default, 2 - taxable, 4 - shipping)
 
         // Set default values only if new object
-        if ($this->is_new($product)) { $product->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH); }
-        if ($this->is_new($product) && $this->is_set($product_hash['description'])) { $product->setShortDescription($product_hash['description']); }
-
-        // Set product stock level on Product creation when specified
         if($this->is_new($product)) {
-            $product->setStockData(array(
-                    'qty' => is_null($product_hash['initial_quantity']) ? $product_hash['quantity_on_hand'] : $product_hash['initial_quantity']
-                )
-            );
+            // Product default visibility
+            $product->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
+            // Set product stock level on product creation when specified
+            if (array_key_exists('initial_quantity', $product_hash)) {
+                $product->setStockData(array(
+                        'qty' => $product_hash['initial_quantity']
+                    )
+                );
+            } else if (array_key_exists('quantity_on_hand', $product_hash)) {
+                $product->setStockData(array(
+                        'qty' => $product_hash['quantity_on_hand']
+                    )
+                );
+            }
+            // Short description set by default with description value
+            if (array_key_exists('description', $product_hash)) {
+                $product->setShortDescription($product_hash['description']);
+            }
         }
     }
 
@@ -62,7 +70,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
         $product_hash['description'] = $product->getDescription();
         $product_hash['sale_price'] = $product->getPrice();
         $product_hash['weight'] = $product->getWeight();
-        ($product->getStatus() === Mage_Catalog_Model_Product_Status::STATUS_ENABLED) ?
+        ($product->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_ENABLED) ?
             $product_hash['status'] = 'ACTIVE' : $product_hash['status'] = 'INACTIVE';
 
         // TODO: Implement this in InventoryOberver

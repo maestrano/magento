@@ -4,9 +4,9 @@
     "host": "http://magento.app.dev.maestrano.io"
   },
   "api": {
-    "id": "api_key",
-    "key": "api_secret",
-    "group_id": "magento.app.dev.maestrano.io"
+    "id": "app-1",
+    "key": "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1",
+    "group_id": "cld-74"
   },
   "sso": {
     "enabled": true,
