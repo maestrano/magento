@@ -16,7 +16,11 @@
     "creation_mode": "virtual"
   },
   "connec": {
-    "enabled": true
+    "enabled": true,
+    "host": "http://api-sandbox.maestrano.io/connec",
+    "base_path": "/api",
+    "v2_path": "/v2",
+    "reports_path": "/reports"
   },
   "webhook": {
     "account": {
@@ -27,22 +31,22 @@
       "initialization_path": "/maestrano/data/initialize.php",
       "notifications_path": "/maestrano/data/subscribe.php",
       "subscriptions": {
-        "accounts": true,
-        "company": true,
+        "accounts": false,
+        "company": false,
         "events": false,
         "event_orders": false,
-        "invoices": true,
+        "invoices": false,
         "items": true,
         "journals": false,
-        "organizations": true,
+        "organizations": false,
         "payments": false,
         "pay_items": false,
         "pay_schedules": false,
         "pay_stubs": false,
         "pay_runs": false,
-        "people": true,
+        "people": false,
         "projects": false,
-        "tax_codes": true,
+        "tax_codes": false,
         "tax_rates": false,
         "time_activities": false,
         "time_sheets": false,
