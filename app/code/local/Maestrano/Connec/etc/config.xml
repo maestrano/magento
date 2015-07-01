@@ -21,6 +21,11 @@
             </connec_mysql4>
         </models>
         <resources>
+            <connec_setup>
+                <setup>
+                    <module>Maestrano_Connec</module>
+                </setup>
+            </connec_setup>
             <connec_write>
                 <connection>
                     <use>core_write</use>
