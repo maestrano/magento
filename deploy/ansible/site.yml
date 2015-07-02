@@ -1,0 +1,11 @@
+---
+
+# This playbook installs and configures Magento
+
+- hosts: localhost
+  connection: local
+  roles:
+    - apache
+    - mysql
+    - ssmtp
+    - magento-install

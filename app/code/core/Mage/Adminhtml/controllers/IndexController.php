@@ -93,7 +93,9 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
         $adminSession->getCookie()->delete($adminSession->getSessionName());
         $adminSession->addSuccess(Mage::helper('adminhtml')->__('You have logged out.'));
 
-        $this->_redirect('*');
+        Mage::log("Mage_Adminhtml_IndexController::logoutAction - Logged out");
+        Mage::log("Mage_Adminhtml_IndexController::logoutAction - Redirecting to " . Mage::getBaseUrl());
+        $this->_redirectUrl(Mage::getBaseUrl());
     }
 
     /**

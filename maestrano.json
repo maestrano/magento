@@ -1,0 +1,58 @@
+{
+  "environment": "local",
+  "app": {
+    "host": "http://magento.app.dev.maestrano.io"
+  },
+  "api": {
+    "id": "app-1",
+    "key": "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1",
+    "group_id": "cld-74"
+  },
+  "sso": {
+    "enabled": true,
+    "slo_enabled": true,
+    "init_path": "/sso/saml/init",
+    "consume_path": "/sso/saml/consume",
+    "creation_mode": "virtual"
+  },
+  "connec": {
+    "enabled": true,
+    "host": "http://api-sandbox.maestrano.io/connec",
+    "base_path": "/api",
+    "v2_path": "/v2",
+    "reports_path": "/reports"
+  },
+  "webhook": {
+    "account": {
+      "groupsPath": "/maestrano/account/groups/:id",
+      "groupUsersPath": "/maestrano/account/groups/:group_id/users/:id"
+    },
+    "connec": {
+      "initialization_path": "/maestrano/data/initialize.php",
+      "notifications_path": "/maestrano/data/subscribe.php",
+      "subscriptions": {
+        "accounts": false,
+        "company": false,
+        "events": false,
+        "event_orders": false,
+        "invoices": false,
+        "items": true,
+        "journals": false,
+        "organizations": false,
+        "payments": false,
+        "pay_items": false,
+        "pay_schedules": false,
+        "pay_stubs": false,
+        "pay_runs": false,
+        "people": false,
+        "projects": false,
+        "tax_codes": false,
+        "tax_rates": false,
+        "time_activities": false,
+        "time_sheets": false,
+        "venues": false,
+        "work_locations": false
+      }
+    }
+  }
+}
