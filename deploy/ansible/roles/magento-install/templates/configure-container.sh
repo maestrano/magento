@@ -14,4 +14,4 @@ api_key=$5
 api_secret=$6
 
 extra_vars="{\"sso_enabled\": \"$sso_enabled\", \"connec_enabled\": \"$connec_enabled\", \"maestrano_environment\": \"$maestrano_environment\", \"server_hostname\": \"$server_hostname\", \"api_key\": \"$api_key\", \"api_secret\": \"$api_secret\"}"
-ansible-playbook /etc/ansible/playbooks/configure_dolibarr.yml -c local --extra-vars="${extra_vars}"
+ansible-playbook /etc/ansible/playbooks/configure_magento.yml -c local --extra-vars="${extra_vars}"
