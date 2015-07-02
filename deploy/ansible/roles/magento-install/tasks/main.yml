@@ -1,0 +1,119 @@
+- name: General | Install Application packages
+  apt: "name={{ item }} state=present"
+  with_items:
+    - git
+    - curl
+    - php5-mcrypt
+
+- name: Magento | Enable php5-mcrypt
+  shell: 'php5enmod mcrypt'
+
+- name: Magento | Ensure MySQL is running
+  service: 
+    name: mysql 
+    state: started
+
+- name: Magento | Create Magento database
+  mysql_db:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    db: "{{ magento_db_name }}"
+    state: present
+
+- name: Magento | Create Magento database user
+  mysql_user:
+    name: "{{ magento_db_user }}"
+    password: "{{ magento_db_password }}"
+    priv: "{{ magento_db_name }}.*:ALL,GRANT"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Magento | Download application from Github
+  sudo: false
+  git: >
+    repo=https://github.com/alexnoox/magento.git
+    dest={{ magento_root_path }}
+    version={{ magento_version }}
+    accept_hostkey=yes
+    ssh_opts="-o StrictHostKeyChecking=no"
+    update=yes
+    force=yes
+
+- name: Magento | Current commit hash
+  shell: 'git log -n 1 --pretty=format:"%H" > {{ magento_root_path }}/.git-version'
+  args:
+    chdir: "{{ magento_root_path }}"
+
+- name: Magento | Configure Apache virtual host
+  template: 
+    src: etc-apache24-confd-magento-conf
+    dest: /etc/apache2/sites-available/magento.conf
+    owner: www-data
+    group: www-data
+    mode: 755
+
+- name: Magento | Enable Apache virtual host 
+  file: src=/etc/apache2/sites-available/magento.conf dest=/etc/apache2/sites-enabled/magento.conf state=link
+
+- name: Apache | Restart the Apache service
+  service: 
+    name: apache2 
+    state: restarted
+
+- name: Magento | Install script
+  shell: 'php -f install.php -- --license_agreement_accepted yes
+            --locale en_US --timezone "America/Los_Angeles" --default_currency USD
+            --db_host localhost --db_name {{ magento_db_name }} --db_user {{ magento_db_user }} --db_pass {{ magento_db_password }}
+            --url "http://{{ server_hostname }}/" --use_rewrites yes
+            --use_secure no --secure_base_url "http://{{ server_hostname }}/" --use_secure_admin no
+            --skip_url_validation yes
+            --admin_lastname {{ magento_admin_lastname }} --admin_firstname {{ magento_admin_firstname }} --admin_email "{{ magento_admin_email }}"
+            --admin_username {{ magento_admin_username }} --admin_password {{ magento_admin_password }}'
+  args:
+    chdir: "{{ magento_root_path }}"
+  
+- name: Magento | Reindex script
+  shell: "php -f shell/indexer.php reindexall"
+  args:
+    chdir: "{{ magento_root_path }}"
+
+- name: Magento | Configuration file maestrano.json
+  template: 
+    src: magento-maestrano.json
+    dest: "{{ magento_root_path }}/maestrano.json"
+    owner: www-data
+    group: www-data
+    mode: 755
+  tags:
+    - configuration
+
+- name: Magento | Set file permissions
+  file:
+    path: "{{ magento_root_path }}"
+    mode: 0755
+    owner: www-data
+    group: www-data
+    state: directory
+    recurse: yes
+  tags:
+    - configuration
+
+- name: Magento | Base schema maestrano-add-config-data.sql
+  template:
+    src: maestrano-add-config-data.sql
+    dest: "{{ magento_root_path }}/maestrano/maestrano-add-config-data.sql"
+    owner: www-data
+    group: www-data
+    mode: 755
+  tags:
+    - configuration
+
+- name: Magento | Apply Maestrano patch
+  shell: "mysql {{ magento_db_name }} -u{{magento_db_user}} -p{{magento_db_password}} < {{ item }}"
+  args:
+    chdir: "{{ magento_root_path }}/maestrano/"
+  with_items:
+    - maestrano-add-config-data.sql
+  tags:
+    - configuration
