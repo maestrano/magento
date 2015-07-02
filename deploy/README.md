@@ -20,3 +20,5 @@ sudo docker run -it \
   --add-host connec.maestrano.io:172.17.42.1 \
   maestrano/magento:latest
  ```
+
+If using boot2docker the host address is the result of `boot2docker ip`
