@@ -4,9 +4,9 @@
     "host": "http://magento.app.dev.maestrano.io"
   },
   "api": {
-    "id": "app-1",
-    "key": "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1",
-    "group_id": "cld-74"
+    "id": "14688d453eedf71ea07db490ad55301dd8c0dc973c65d930b0b294be56658557",
+    "key": "f850ef9e-719c-4064-8c78-88de37c9c1f6",
+    "group_id": "uxf.app.uat.maestrano.io"
   },
   "sso": {
     "enabled": true,
@@ -17,7 +17,7 @@
   },
   "connec": {
     "enabled": true,
-    "host": "http://api-sandbox.maestrano.io/connec",
+    "host": "http://connec1.apse1.uat.maestrano.io",
     "base_path": "/api",
     "v2_path": "/v2",
     "reports_path": "/reports"
@@ -28,23 +28,23 @@
       "groupUsersPath": "/maestrano/account/groups/:group_id/users/:id"
     },
     "connec": {
-      "initialization_path": "/maestrano/data/initialize.php",
-      "notifications_path": "/maestrano/data/subscribe.php",
+      "initialization_path": "/connec/data/initialize",
+      "notifications_path": "/connec/data/subscribe",
       "subscriptions": {
         "accounts": false,
         "company": false,
         "events": false,
         "event_orders": false,
-        "invoices": false,
+        "invoices": true,
         "items": true,
         "journals": false,
         "organizations": false,
-        "payments": false,
+        "payments": true,
         "pay_items": false,
         "pay_schedules": false,
         "pay_stubs": false,
         "pay_runs": false,
-        "people": false,
+        "people": true,
         "projects": false,
         "tax_codes": false,
         "tax_rates": false,
