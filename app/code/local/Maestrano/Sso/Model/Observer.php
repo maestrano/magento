@@ -4,7 +4,6 @@ class Maestrano_Sso_Model_Observer
 {
     function __construct()
     {
-        Mage::log("## Maestrano_Sso_Model_Observer - in __construct:");
         Maestrano::configure('maestrano.json');
     }
 
@@ -14,7 +13,6 @@ class Maestrano_Sso_Model_Observer
     public function actionPreDispatchAdmin(Varien_Event_Observer $observer)
     {
         // Hook Maestrano
-        Mage::log("## Maestrano_Sso_Model_Observer - SSO is enabled: " . Maestrano::sso()->isSsoEnabled());
         if (Maestrano::sso()->isSsoEnabled()) {
             // Get the meastrano session
             /** @var $mnoSession Maestrano_Sso_Session */
