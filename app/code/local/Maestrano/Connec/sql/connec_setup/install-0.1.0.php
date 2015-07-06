@@ -3,7 +3,7 @@ $installer = $this;
 $installer->startSetup();
 
 $sql=<<<SQLTEXT
-create TABLE `connec_mnoidmap` (
+CREATE TABLE `connec_mnoidmap` (
     `mnoidmap_id` int(11) unsigned not null,
     `mno_entity_guid` varchar(255) not null,
     `mno_entity_name` varchar(255) not null,
