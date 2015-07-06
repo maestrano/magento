@@ -1,9 +1,9 @@
 # Magento by Maestrano
-This version of Dolibarr is customized to provide Single Sing-On and Connec!™ data sharing. By default, these options are not enabled so an instance of the application can be launched in a Docker container and be run as-is.
+This version of Magento is customized to provide Single Sing-On and Connec!™ data sharing. By default, these options are not enabled so an instance of the application can be launched in a Docker container and be run as-is.
 More information on [Maestrano SSO](https://maestrano.com) and [Connec!™ data sharing](https://maestrano.com/connec)
 
 ## Build Docker container with default Magento installation
-`sudo docker build .`
+`docker build -t alexnoox/magento:latest .`
 
 ## Activate Magento customisation on start (SSO and Connec!™ data sharing)
 This is achieved by specifying Maestrano environment variables
@@ -20,3 +20,5 @@ sudo docker run -it \
   --add-host connec.maestrano.io:172.17.42.1 \
   maestrano/magento:latest
  ```
+
+If using boot2docker the host address is the result of `boot2docker ip`
