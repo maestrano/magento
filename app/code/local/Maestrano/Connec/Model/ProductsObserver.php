@@ -16,7 +16,6 @@ class Maestrano_Connec_Model_ProductsObserver
 
         $product = $observer->getEvent()->getProduct();
 
-        Mage::log('## Maestrano_Connec_Model_ProductsObserver::catalogProductSaveAfter - isObjectNew: ' . $product->isObjectNew());
         Mage::log('## catalogProductSaveAfter: ' . $product->getId());
 
         // Save product in connec!
@@ -40,7 +39,10 @@ class Maestrano_Connec_Model_ProductsObserver
         $product = $observer->getEvent()->getProduct();
         Mage::log('## catalogProductDeleteAfter: ' . $product->getId());
 
-        // Delete product in connec!
+        // Delete product in connec_mnomapid!
+        /** @var Maestrano_Connec_Helper_Products $helper */
+        $helper = Mage::helper('mnomap/products');
+        $helper->processLocalUpdate($product, false, true);
     }
 
 }
