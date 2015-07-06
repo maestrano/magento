@@ -16,13 +16,17 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
     }
 
     // Map the Connec resource attributes onto the Magento model
-    protected function mapConnecResourceToModel($product_hash, $product)
+    protected function mapConnecResourceToModel($product_hash, &$product)
     {
         // Fiels mapping
         if (array_key_exists('code', $product_hash)) { $product->setSku($product_hash['code']); }
         if (array_key_exists('name', $product_hash)) { $product->setName($product_hash['name']); }
         if (array_key_exists('description', $product_hash)) { $product->setDescription($product_hash['description']); }
-        if (array_key_exists('sale_price', $product_hash)) { $product->setPrice($product_hash['sale_price']); }
+        if (array_key_exists('sale_price', $product_hash)) {
+            if (array_key_exists('net_amount', $product_hash['sale_price'])) {
+                $product->setPrice($product_hash['sale_price']['net_amount']);
+            }
+        }
         if (array_key_exists('weight', $product_hash)) { $product->setWeight($product_hash['weight']); }
         if (array_key_exists('status', $product_hash)) {
             if ($product_hash['status'] === 'ACTIVE') {
@@ -53,6 +57,8 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
             if (array_key_exists('description', $product_hash)) {
                 $product->setShortDescription($product_hash['description']);
             }
+
+            $product->setAttributeSetId(4); // 9 is for default
         }
     }
 
@@ -88,11 +94,5 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
         }*/
 
         return $product_hash;
-    }
-
-    // Persist the Magento model
-    protected function persistLocalModel($model, $resource_hash)
-    {
-        $model->save();
     }
 }
