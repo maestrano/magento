@@ -94,7 +94,7 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
 
         if(is_null($entity_id)) { return null; }
 
-        $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByMnoIdAndEntityName($entity_id, $this->connec_entity_name, $this->$this->local_entity_name);
+        $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByMnoIdAndEntityName($entity_id, $this->connec_entity_name, $this->local_entity_name);
         if(!$mno_id_map) {
             // Entity does not exist locally, fetch it from Connec!
             return $this->fetchConnecResource($entity_id);
