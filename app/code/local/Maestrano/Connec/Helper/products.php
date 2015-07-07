@@ -19,6 +19,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
     protected function mapConnecResourceToModel($product_hash, &$product)
     {
         // Fiels mapping
+        $product->setTypeId('simple');
         if (array_key_exists('code', $product_hash)) { $product->setSku($product_hash['code']); }
         if (array_key_exists('name', $product_hash)) { $product->setName($product_hash['name']); }
         if (array_key_exists('description', $product_hash)) { $product->setDescription($product_hash['description']); }
