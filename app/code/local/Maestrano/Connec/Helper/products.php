@@ -68,7 +68,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
             ));
         }
 
-        //Mage::log("Maestrano_Connec_Helper_Products::mapConnecResourceToModel - mapped product: " . print_r($product, 1));
+        Mage::log("Maestrano_Connec_Helper_Products::mapConnecResourceToModel - mapped product: " . print_r($product, 1));
     }
 
     // Map the Magento model to a Connec resource hash
@@ -103,7 +103,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
             $product_hash['current_value'] = $unit_price;
         }*/
 
-        //Mage::log("Maestrano_Connec_Helper_Products::mapModelToConnecResource - mapped product_hash: " . print_r($product_hash, 1));
+        Mage::log("Maestrano_Connec_Helper_Products::mapModelToConnecResource - mapped product_hash: " . print_r($product_hash, 1));
 
         return $product_hash;
     }
