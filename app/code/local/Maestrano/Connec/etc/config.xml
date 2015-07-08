@@ -5,6 +5,17 @@
             <version>0.1.0</version>
         </Maestrano_Connec>
     </modules>
+    <frontend>
+        <routers>
+            <connec>
+                <use>standard</use>
+                <args>
+                    <module>Maestrano_Connec</module>
+                    <frontName>connec</frontName>
+                </args>
+            </connec>
+        </routers>
+    </frontend>
     <global>
         <models>
             <connec>

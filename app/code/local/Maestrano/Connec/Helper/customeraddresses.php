@@ -3,8 +3,8 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
 
     public function __construct() {
         parent::__construct();
-        $this->connec_entity_name = 'Address';
-        $this->local_entity_name = 'Addresses';
+        $this->connec_entity_name = 'Customer';
+        $this->local_entity_name = 'Customers';
         $this->connec_resource_name = 'people';
         $this->connec_resource_endpoint = 'people';
     }
@@ -12,17 +12,20 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
     // Return a local Model by id
     public function loadModelById($localId)
     {
-        $localModel = Mage::getModel("customer/customeraddresses")->load($localId);
+        $localModel = Mage::getModel('customer/customeraddresses')->load($localId);
         return $localModel;
+    }
+
+    protected function getNewModel()
+    {
+        return Mage::getModel('customer/customeraddresses');
     }
 
     // Map the Connec resource attributes onto the Magento model
     protected function mapConnecResourceToModel($customer_hash, &$address)
     {
-        // Mapped values
-
-
-        Mage::log("Maestrano_Connec_Helper_Customers::mapConnecResourceToModel - mapped address: " . print_r($address, 1));
+        // Is not used for address
+        // Addresses are mapped in the customer helper
     }
 
     /**
@@ -101,7 +104,7 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
     }
 
     /**
-     * @param $address
+     * @param Mage_Customer_Model_Address $address
      * @return array address_hash
      */
     protected function mapModelAddressToConnecResource($address)
@@ -118,5 +121,44 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
         $address_hash['country'] = $address->getCountry();
 
         return $address_hash;
+    }
+
+    /**
+     * OVERRIDED
+     * Push an address to connec
+     * Specific behavior for addresses
+     * @param Mage_Customer_Model_Address $model
+     * @return bool|void
+     */
+    protected function pushToConnec($model) {
+        // Find local id
+        $customer_id = $model->getCustomer()->getId();
+        Mage::log("Maestrano_Connec_Helper_Customeraddresses::pushToConnec entity=$this->connec_entity_name, customer_id=$customer_id");
+
+        // Transform the Model into a Connec hash
+        $resource_hash = $this->mapModelToConnecResource($model);
+        if (empty($resource_hash)) {
+            return;
+        }
+
+        $hash = array($this->connec_resource_name => $resource_hash);
+
+        // Find Connec resource id
+        $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByLocalIdAndEntityName($customer_id, $this->local_entity_name);
+
+        // Update resource in connect
+        $url = $this->connec_resource_endpoint . '/' . $mno_id_map['mno_entity_guid'];
+        Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec updating entity=$this->local_entity_name, url=$url, id=$customer_id hash=" . json_encode($hash));
+        $response = $this->_connec_client->put($url, $hash);
+
+        // Process Connec response
+        $code = $response['code'];
+        $body = $response['body'];
+        if($code >= 300) {
+            Mage::log("Maestrano_Connec_Helper_Customeraddresses::pushToConnec Cannot push to Connec! entity_name=$this->local_entity_name, code=$code, body=$body");
+            return false;
+        } else {
+            Mage::log("Maestrano_Connec_Helper_Customeraddresses::pushToConnec Processing Connec! response code=$code, body=$body");
+        }
     }
 }

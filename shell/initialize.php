@@ -19,7 +19,13 @@ class Maestrano_Shell_Initialize extends Mage_Shell_Abstract
             return false;
         }
 
+        /** @var Maestrano_Connec_Helper_Observerlockhelper $locker */
+        $locker = Mage::helper('mnomap/observerlockhelper');
+
         try {
+            // Lock the observers globally
+            $locker->lockGlobally();
+
             $filepath = $this->_getRootPath() . 'var/_data_sequence';
             $status = false;
 
@@ -30,9 +36,9 @@ class Maestrano_Shell_Initialize extends Mage_Shell_Abstract
 
             // Fetch updates
             Maestrano_Shell_Initialize::log('Fetch connec updates since ' . $timestamp);
-            Maestrano_Shell_Initialize::log("URL used: updates/$timestamp?\$filter[entity]=Item");
+            Maestrano_Shell_Initialize::log("URL used: updates/$timestamp?\$filter[entity]=Item,Person");
             $client = new Maestrano_Connec_Client();
-            $msg = $client->get("updates/$timestamp?\$filter[entity]=Item");
+            $msg = $client->get("updates/$timestamp?\$filter[entity]=Item,Person");
             $code = $msg['code'];
             $body = $msg['body'];
 
@@ -48,7 +54,7 @@ class Maestrano_Shell_Initialize extends Mage_Shell_Abstract
 
                 // Dynamically find mappers and map entities
                 foreach($mappers as $mapper) {
-                    Maestrano_Shell_Initialize::log("Processing mapper: " . get_class($mapper) . " with " . print_r($result[$mapper->getConnecResourceName()], 1));
+                    Maestrano_Shell_Initialize::log("Processing mapper: " . get_class($mapper) . " with " . count($result[$mapper->getConnecResourceName()]) . " elements.");
                     $mapper->persistAll($result[$mapper->getConnecResourceName()], true);
                 }
 
@@ -62,6 +68,8 @@ class Maestrano_Shell_Initialize extends Mage_Shell_Abstract
         } catch (Exception $ex) {
             Maestrano_Shell_Initialize::log("### An exception occured :(");
             Maestrano_Shell_Initialize::log("### Exception: $ex->getMessage(), stacktrace: $ex->getTrace()");
+        } finally {
+            $locker->unlockGlobally();
         }
     }
 

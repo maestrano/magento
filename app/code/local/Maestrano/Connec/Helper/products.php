@@ -16,6 +16,12 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
         return $localModel;
     }
 
+    // Return a new local Model
+    protected function getNewModel()
+    {
+        return Mage::getModel('catalog/product');
+    }
+
     // Map the Connec resource attributes onto the Magento model
     protected function mapConnecResourceToModel($product_hash, &$product)
     {
@@ -67,7 +73,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
 
         }
 
-        Mage::log("Maestrano_Connec_Helper_Products::mapConnecResourceToModel - mapped product: " . print_r($product, 1));
+        Mage::log("Maestrano_Connec_Helper_Products::mapConnecResourceToModel - mapped product: " . print_r($product->getData(), 1));
     }
 
     // Map the Magento model to a Connec resource hash

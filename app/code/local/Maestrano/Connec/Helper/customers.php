@@ -16,6 +16,90 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
         return $localModel;
     }
 
+    protected function getNewModel()
+    {
+        return Mage::getModel('customer/customer');
+    }
+
+    public function afterSaveConnecResource($resource_hash, $model, $oberverLock) {
+        Mage::log("Maestrano_Connec_Helper_Customers::afterSaveConnecResource - mapped customer id: " . $model->getId());
+
+        // Only if a new ressource
+        if($this->isNewByConnecId($resource_hash['id'])) {
+            // There is at least an address
+            if (array_key_exists('address_home', $resource_hash)) {
+                // There is 2 addresses coming from connec
+                if (array_key_exists('billing', $resource_hash['address_home']) && array_key_exists('shipping', $resource_hash['address_home'])) {
+                    // It the same address
+                    if ($resource_hash['address_home']['billing'] === $resource_hash['address_home']['shipping']) {
+                        // If the same, add one address as default for both
+                        $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['billing'], true, true);
+                    } else {
+                        // Add billing address
+                        $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['billing'], true);
+
+                        // Add shipping address
+                        $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['shipping'], false, true);
+                    }
+                } elseif (array_key_exists('billing', $resource_hash['address_home'])) {
+                    // Add connec billing address
+                    $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['billing'], true, true);
+                } elseif (array_key_exists('shipping', $resource_hash['address_home'])) {
+                    // Add connec shipping address
+                    $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['shipping'], true, true);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $customerId
+     * @param $resource_hash
+     * @param $address_hash
+     * @param bool|false $isBilling
+     * @param bool|false $isShipping
+     * @throws Exception
+     */
+    protected function addConnecAddressToModel($customerId, $resource_hash, $address_hash, $isBilling = false, $isShipping = false)
+    {
+        /** @var Mage_Customer_Model_Address $address */
+        $address = Mage::getModel('customer/address');
+        $address->setCustomerId($customerId);
+
+        if ($isBilling) {
+            if (array_key_exists('phone_home', $resource_hash) && array_key_exists('landline', $resource_hash['phone_home'])) {
+                $address->setTelephone($resource_hash['phone_home']['landline']);
+            }
+            if (array_key_exists('phone_home', $resource_hash) && array_key_exists('fax', $resource_hash['phone_home'])) {
+                $address->setTelephone($resource_hash['phone_home']['fax']);
+            }
+        }
+
+        // Mapped values
+        if (array_key_exists('attention', $address_hash)) {
+            list($firstname, $lastname) = explode(' ', $address_hash['attention'], 2);
+            $address->setFirstname($firstname);
+            $address->setLastname($lastname);
+        }
+
+        if (array_key_exists('line1', $address_hash) && array_key_exists('line2', $address_hash)) {
+            $address->setStreetFull($address_hash['line1'] . "\n" . $address_hash['line2']);
+        }
+        if (array_key_exists('city', $address_hash)) { $address->setCity($address_hash['city']); }
+        if (array_key_exists('region', $address_hash)) { $address->setRegion($address_hash['region']); }
+        if (array_key_exists('postal_code', $address_hash)) { $address->setPostcode($address_hash['postal_code']); }
+        if (array_key_exists('country', $address_hash)) { $address->setCountryId( $address_hash['country']); }
+
+        $address->setIsDefaultBilling($isBilling);
+        $address->setIsDefaultShipping($isShipping);
+
+        Mage::log("Maestrano_Connec_Helper_Customers::addConnecAddressToModel - mapped address: " . print_r($address->getData(), 1));
+
+        // Lock the observer
+        $address->setOberverLock(true);
+        $address->save();
+    }
+
     // Map the Connec resource attributes onto the Magento model
     /**
      * @param array $customer_hash
@@ -38,10 +122,7 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
             $customer->setStore(Mage::app()->getStore());
         }
 
-        // Customer addresses
-        //$customer->get
-
-        Mage::log("Maestrano_Connec_Helper_Customers::mapConnecResourceToModel - mapped customer: " . print_r($customer, 1));
+        Mage::log("Maestrano_Connec_Helper_Customers::mapConnecResourceToModel - mapped customer: " . print_r($customer->getData(), 1));
     }
 
     /**
@@ -67,34 +148,9 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
             $customer_hash['organisation_id'] = true;
         }
 
-        // Customer Addresses
-        /*$customer_hash['address_home'] = array();
-        $customer_hash['address_home']['billing'] = $this->mapModelAddressToConnecResource($customer->getDefaultBillingAddress());
-        $customer_hash['address_home']['shipping'] = $this->mapModelAddressToConnecResource($customer->getDefaultShippingAddress());*/
-
         Mage::log("Maestrano_Connec_Helper_Customers::mapModelToConnecResource - mapped customer_hash: " . print_r($customer_hash, 1));
 
         return $customer_hash;
     }
-
-    /**
-     * @param $address
-     * @return array address_hash
-     */
-    /*protected function mapModelAddressToConnecResource($address)
-    {
-        $address_hash = array();
-
-        // Mapped values
-        $address_hash['attention'] = $address->getFirstname() . ' ' . $address->getLastname();
-        $address_hash['line1'] = $address->getStreet1();
-        $address_hash['line2'] = $address->getStreet2();
-        $address_hash['city'] = $address->getCity();
-        $address_hash['region'] = $address->getRegion();
-        $address_hash['postal_code'] = $address->getPostcode();
-        $address_hash['country'] = $address->getCountry();
-
-        return $address_hash;
-    }*/
 
 }

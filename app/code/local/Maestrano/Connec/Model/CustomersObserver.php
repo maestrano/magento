@@ -9,17 +9,20 @@ class Maestrano_Connec_Model_CustomersObserver
     {
         $customer = $observer->getEvent()->getCustomer();
 
-        $observerLock = $customer->getObserverLock();
-        if ($observerLock) {
-            Mage::log("## Maestrano_Connec_Model_CustomersObserver::customerSaveAfter - Observers are locked for customer " . $customer->getId());
+        /** @var Maestrano_Connec_Helper_Observerlockhelper $locker */
+        $locker = Mage::helper('mnomap/observerlockhelper');
+        if ($locker->isLockedGlobally()) {
+            Mage::log("## Maestrano_Connec_Model_CustomerAddressesObserver::customerAddressSaveAfter - Observers are locked globally");
             return;
         }
 
         // Save customer in connec!
         Mage::log('## Maestrano_Connec_Model_CustomersObserver::customerSaveAfter: processing customer: ' . $customer->getId());
-        /** @var Maestrano_Connec_Helper_Customers $customerMapper */
+        /** @var Maestrano_Connec_Helper_Customers $mapper */
         $mapper = Mage::helper('mnomap/customers');
         $mapper->processLocalUpdate($customer);
+
+        Mage::register('customer_save_observer_executed_'.$customer->getId(), true);
     }
 
     /**
@@ -27,11 +30,12 @@ class Maestrano_Connec_Model_CustomersObserver
      */
     public function customerDeleteAfter(Varien_Event_Observer $observer)
     {
-        $customer = $observer->getEvent()->getProduct();
+        $customer = $observer->getEvent()->getCustomer();
 
-        $observerLock = $customer->getObserverLock();
-        if ($observerLock) {
-            Mage::log("## Maestrano_Connec_Model_CustomersObserver::customerDeleteAfter - Observers are locked for customer " . $customer->getId());
+        /** @var Maestrano_Connec_Helper_Observerlockhelper $locker */
+        $locker = Mage::helper('mnomap/observerlockhelper');
+        if ($locker->isLockedGlobally()) {
+            Mage::log("## Maestrano_Connec_Model_CustomerAddressesObserver::customerAddressSaveAfter - Observers are locked globally");
             return;
         }
 
