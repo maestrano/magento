@@ -53,16 +53,11 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
     {
         $customer_hash = array();
 
-        $billingAddress = $customer->getDefaultBillingAddress();
-
         // Mapped values
         $customer_hash['title'] = $customer->getPrefix();
         $customer_hash['first_name'] = $customer->getFirstname();
         $customer_hash['last_name'] = $customer->getLastname();
         $customer_hash['birth_date'] = $customer->getDob();
-        $customer_hash['phone_home'] = array();
-        $customer_hash['phone_home']['landline'] = $billingAddress->getTelephone();
-        $customer_hash['phone_home']['fax'] = $billingAddress->getFax();
         $customer_hash['email'] = array();
         $customer_hash['email']['address'] = $customer->getEmail();
 
