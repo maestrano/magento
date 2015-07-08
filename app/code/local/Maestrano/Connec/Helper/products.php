@@ -19,6 +19,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
     protected function mapConnecResourceToModel($product_hash, &$product)
     {
         // Fiels mapping
+        $product->setTypeId('simple');
         if (array_key_exists('code', $product_hash)) { $product->setSku($product_hash['code']); }
         if (array_key_exists('name', $product_hash)) { $product->setName($product_hash['name']); }
         if (array_key_exists('description', $product_hash)) { $product->setDescription($product_hash['description']); }
@@ -27,7 +28,11 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
                 $product->setPrice($product_hash['sale_price']['net_amount']);
             }
         }
-        if (array_key_exists('weight', $product_hash)) { $product->setWeight($product_hash['weight']); }
+        if (array_key_exists('weight', $product_hash)) {
+            $product->setWeight($product_hash['weight']);
+        } else {
+            $product->setWeight(0);
+        }
         if (array_key_exists('status', $product_hash)) {
             if ($product_hash['status'] === 'ACTIVE') {
                 $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
@@ -38,7 +43,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
         array_key_exists('sale_tax_code_id', $product_hash) ? $product->setTaxClassId(2) : $product->setTaxClassId(0); //tax class (0 - none, 1 - default, 2 - taxable, 4 - shipping)
 
         // Set default values only if new object
-        if($this->is_new($product)) {
+        if($this->isNewByConnecId($product_hash['id'])) {
             // Product default visibility
             $product->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
             // Set product stock level on product creation when specified
@@ -59,7 +64,12 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
             }
 
             $product->setAttributeSetId(4); // 9 is for default
+            $product->setStockData(array(
+                'qty' => 0
+            ));
         }
+
+        Mage::log("Maestrano_Connec_Helper_Products::mapConnecResourceToModel - mapped product: " . print_r($product, 1));
     }
 
     // Map the Magento model to a Connec resource hash
@@ -67,17 +77,18 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
     {
         $product_hash = array();
 
-        // Default product type to PURCHASED on creation
-        if($this->is_new($product)) { $product_hash['type'] = 'PURCHASED'; }
-
         // Map attributes
         $product_hash['code'] = $product->getSku();
         $product_hash['name'] = $product->getName();
         $product_hash['description'] = $product->getDescription();
-        $product_hash['sale_price'] = $product->getPrice();
+        $product_hash['sale_price'] = array();
+        $product_hash['sale_price']['net_amount'] = $product->getPrice();
         $product_hash['weight'] = $product->getWeight();
         ($product->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_ENABLED) ?
             $product_hash['status'] = 'ACTIVE' : $product_hash['status'] = 'INACTIVE';
+
+        // Default product type to PURCHASED on creation
+        if($this->isNewByLocalId($product->getId())) { $product_hash['type'] = 'PURCHASED'; }
 
         // TODO: Implement this in InventoryOberver
         // TODO: What if a new qty is entered?
@@ -92,6 +103,8 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
             $product_hash['average_cost'] = $qtyinstock * $unit_price;
             $product_hash['current_value'] = $unit_price;
         }*/
+
+        Mage::log("Maestrano_Connec_Helper_Products::mapModelToConnecResource - mapped product_hash: " . print_r($product_hash, 1));
 
         return $product_hash;
     }
