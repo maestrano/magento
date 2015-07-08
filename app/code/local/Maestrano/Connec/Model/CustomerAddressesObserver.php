@@ -1,25 +1,27 @@
 <?php
 
-class Maestrano_Connec_Model_CustomersObserver
+class Maestrano_Connec_Model_CustomerAddressesObserver
 {
     /**
      * @param Varien_Event_Observer $observer
      */
-    public function customerSaveAfter(Varien_Event_Observer $observer)
+    public function customerAddressSaveAfter(Varien_Event_Observer $observer)
     {
-        $customer = $observer->getEvent()->getCustomer();
+        Mage::log("## in customerAddressSaveAfter()");
+        $address = $observer->getEvent()->getCustomerAddress();
+        //$customer = Mage::getModel('customer/customer')->load($address->getCustomerId());
 
-        $observerLock = $customer->getObserverLock();
+        $observerLock = $address->getObserverLock();
         if ($observerLock) {
-            Mage::log("## Maestrano_Connec_Model_CustomersObserver::customerSaveAfter - Observers are locked for customer " . $customer->getId());
+            Mage::log("## Maestrano_Connec_Model_CustomerAddressesObserver::customerAddressSaveAfter - Observers are locked for address " . $address->getId());
             return;
         }
 
         // Save customer in connec!
-        Mage::log('## Maestrano_Connec_Model_CustomersObserver::customerSaveAfter: processing customer: ' . $customer->getId());
-        /** @var Maestrano_Connec_Helper_Customers $customerMapper */
-        $mapper = Mage::helper('mnomap/customers');
-        $mapper->processLocalUpdate($customer);
+        Mage::log('## Maestrano_Connec_Model_CustomerAddressesObserver::customerAddressSaveAfter: processing customer: ' . $address->getId());
+        /** @var Maestrano_Connec_Helper_Customeraddresses $customerMapper */
+        $mapper = Mage::helper('mnomap/customeraddresses');
+        $mapper->processLocalUpdate($address);
     }
 
     /**

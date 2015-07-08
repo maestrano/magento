@@ -2,6 +2,7 @@
 class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappers {
 
     public function __construct() {
+        parent::__construct();
         $this->connec_entity_name = 'Product';
         $this->local_entity_name = 'Products';
         $this->connec_resource_name = 'items';
@@ -11,7 +12,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
     // Return a local Model by id
     public function loadModelById($localId)
     {
-        $localModel = Mage::getModel('catalog/product')->load($localId);;
+        $localModel = Mage::getModel('catalog/product')->load($localId);
         return $localModel;
     }
 
@@ -47,16 +48,15 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
             // Product default visibility
             $product->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
             // Set product stock level on product creation when specified
-            if (array_key_exists('initial_quantity', $product_hash)) {
+            if (array_key_exists('quantity_available', $product_hash)) {
                 $product->setStockData(array(
-                        'qty' => $product_hash['initial_quantity']
+                        'qty' => $product_hash['quantity_available']
                     )
                 );
-            } else if (array_key_exists('quantity_on_hand', $product_hash)) {
+            } else {
                 $product->setStockData(array(
-                        'qty' => $product_hash['quantity_on_hand']
-                    )
-                );
+                    'qty' => 0
+                ));
             }
             // Short description set by default with description value
             if (array_key_exists('description', $product_hash)) {
@@ -64,9 +64,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
             }
 
             $product->setAttributeSetId(4); // 9 is for default
-            $product->setStockData(array(
-                'qty' => 0
-            ));
+
         }
 
         Mage::log("Maestrano_Connec_Helper_Products::mapConnecResourceToModel - mapped product: " . print_r($product, 1));
@@ -89,20 +87,6 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
 
         // Default product type to PURCHASED on creation
         if($this->isNewByLocalId($product->getId())) { $product_hash['type'] = 'PURCHASED'; }
-
-        // TODO: Implement this in InventoryOberver
-        // TODO: What if a new qty is entered?
-        // Inventory tracking
-        /*$qty = $product->column_fields['qtyinstock'];
-        $qtyindemand = $product->column_fields['qtyindemand'];
-        $unit_price = $product->column_fields['unit_price'];
-        if($this->is_set($qtyinstock) && $this->is_set($qtyindemand)) {
-            $product_hash['quantity_on_hand'] = $qtyinstock;
-            $product_hash['quantity_committed'] = $qtyindemand;
-            $product_hash['quantity_available'] = $qtyinstock - $qtyindemand;
-            $product_hash['average_cost'] = $qtyinstock * $unit_price;
-            $product_hash['current_value'] = $unit_price;
-        }*/
 
         Mage::log("Maestrano_Connec_Helper_Products::mapModelToConnecResource - mapped product_hash: " . print_r($product_hash, 1));
 

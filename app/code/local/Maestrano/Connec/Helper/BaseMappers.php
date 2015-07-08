@@ -20,7 +20,7 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
     protected $_date_format = null;
 
     public function __construct() {
-        Mage::log("Maestrano_Connec_Helper_BaseMappers::_construct in _construct!!");
+        Maestrano::configure('maestrano.json');
         $this->_connec_client = new Maestrano_Connec_Client();
         $this->_date_format = DateTime::ISO8601;
     }
@@ -106,8 +106,6 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
     public function fetchConnecResource($entity_id) {
         Mage::log("Maestrano_Connec_Helper_BaseMappers::fetchConnecResource entity_name=$this->connec_entity_name, entity_id=$entity_id");
 
-        // TODO: Not initializing in constructor
-        $this->_connec_client = new Maestrano_Connec_Client();
         $msg = $this->_connec_client->get("$this->connec_resource_endpoint/$entity_id");
         $code = $msg['code'];
 
@@ -243,17 +241,17 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
 
     // Transform an Magento Model into a Connec Resource and push it to Connec
     protected function pushToConnec($model) {
-        // TODO: Not initializing in constructor
-        $this->_connec_client = new Maestrano_Connec_Client();
-
         // Find local id
         $local_id = $model->getId();
         Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec entity=$this->connec_entity_name, local_id=$local_id");
 
         // Transform the Model into a Connec hash
         $resource_hash = $this->mapModelToConnecResource($model);
+        if (empty($resource_hash)) {
+            return;
+        }
+
         $hash = array($this->connec_resource_name => $resource_hash);
-        //Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec generated connec hash: " . json_encode($hash));
 
         // Find Connec resource id
         $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByLocalIdAndEntityName($local_id, $this->local_entity_name);

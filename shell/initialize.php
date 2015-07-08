@@ -44,6 +44,7 @@ class Maestrano_Shell_Initialize extends Mage_Shell_Abstract
 
                 // Array of mapper to be executed
                 $mappers[] = Mage::helper('mnomap/products');
+                $mappers[] = Mage::helper('mnomap/customers');
 
                 // Dynamically find mappers and map entities
                 foreach($mappers as $mapper) {
