@@ -27,6 +27,7 @@ class Maestrano_Connec_Model_Mnoidmap extends Mage_Core_Model_Abstract
         $new->setMnoEntityName($mno_entity_name);
         $new->setAppEntityId($local_id);
         $new->setAppEntityName($local_entity_name);
+        $new->setDbTimestamp(now());
         $new->save();
 
         return $new;

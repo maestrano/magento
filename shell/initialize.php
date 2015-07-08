@@ -20,9 +20,6 @@ class Maestrano_Shell_Initialize extends Mage_Shell_Abstract
         }
 
         try {
-            // Lock the observers
-            Mage::getSingleton('admin/session')->setObserversLock(true);
-
             $filepath = $this->_getRootPath() . 'var/_data_sequence';
             $status = false;
 
@@ -51,7 +48,7 @@ class Maestrano_Shell_Initialize extends Mage_Shell_Abstract
                 // Dynamically find mappers and map entities
                 foreach($mappers as $mapper) {
                     Maestrano_Shell_Initialize::log("Processing mapper: " . get_class($mapper) . " with " . print_r($result[$mapper->getConnecResourceName()], 1));
-                    $mapper->persistAll($result[$mapper->getConnecResourceName()]);
+                    $mapper->persistAll($result[$mapper->getConnecResourceName()], true);
                 }
 
                 $status = true;
@@ -64,9 +61,6 @@ class Maestrano_Shell_Initialize extends Mage_Shell_Abstract
         } catch (Exception $ex) {
             Maestrano_Shell_Initialize::log("### An exception occured :(");
             Maestrano_Shell_Initialize::log("### Exception: $ex->getMessage(), stacktrace: $ex->getTrace()");
-        } finally {
-            // Unlock the observers! (Release the Kraken!)
-            Mage::getSingleton('admin/session')->setObserversLock(false);
         }
     }
 

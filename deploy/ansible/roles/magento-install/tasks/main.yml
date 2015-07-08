@@ -117,3 +117,10 @@
     - maestrano-add-config-data.sql
   tags:
     - configuration
+
+- name: Magento | Import Connec! data
+  shell: "(nohup php shell/initialize.php 1>/dev/null 2>&1) &"
+  args:
+    chdir: "{{ magento_root_path }}"
+  tags:
+    - configuration
