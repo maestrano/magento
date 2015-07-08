@@ -32,7 +32,7 @@
 - name: Magento | Download application from Github
   sudo: false
   git: >
-    repo=https://github.com/alexnoox/magento.git
+    repo=https://github.com/maestrano/magento.git
     dest={{ magento_root_path }}
     version={{ magento_version }}
     accept_hostkey=yes

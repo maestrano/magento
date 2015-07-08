@@ -35,7 +35,7 @@ magento_admin_username: admin
 magento_admin_password: password123123
 
 # Magento default configuration
-magento_version: master
+magento_version: mno-master
 sso_enabled: "false"
 connec_enabled: "false"
 maestrano_environment: "production"
