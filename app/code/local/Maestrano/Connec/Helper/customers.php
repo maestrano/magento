@@ -87,7 +87,7 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
         }
         if (array_key_exists('city', $address_hash)) { $address->setCity($address_hash['city']); }
         if (array_key_exists('postal_code', $address_hash)) { $address->setPostcode($address_hash['postal_code']); }
-        if (array_key_exists('region', $address_hash)) { $address->setCountry($address_hash['country']); }
+        if (array_key_exists('country', $address_hash)) { $address->setCountry($address_hash['country']); }
         if (array_key_exists('region', $address_hash)) {
             $address->setRegion($address_hash['region']);
             $region = $this->findRegionByName($address_hash['region'], $address_hash['country']);
@@ -173,7 +173,6 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
         // Default connec values
         if($this->isNewByLocalId($customer->getId())) {
             $customer_hash['is_customer'] = true;
-            $customer_hash['organisation_id'] = true;
         }
 
         Mage::log("Maestrano_Connec_Helper_Customers::mapModelToConnecResource - mapped customer_hash: " . print_r($customer_hash, 1));

@@ -81,6 +81,8 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
     {
         $product_hash = array();
 
+        //Mage::log("Maestrano_Connec_Helper_Products::mapModelToConnecResource - product to map: " . print_r($product->getData(), 1));
+
         // Map attributes
         $product_hash['code'] = $product->getSku();
         $product_hash['name'] = $product->getName();
@@ -93,6 +95,11 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
 
         // Default product type to PURCHASED on creation
         if($this->isNewByLocalId($product->getId())) { $product_hash['type'] = 'PURCHASED'; }
+
+        // Inventory
+        if (!is_null($product->getStockItem())) {
+            $product_hash['quantity_available'] = $product->getStockItem()->getQty();
+        }
 
         Mage::log("Maestrano_Connec_Helper_Products::mapModelToConnecResource - mapped product_hash: " . print_r($product_hash, 1));
 

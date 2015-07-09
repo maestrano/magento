@@ -125,14 +125,6 @@
                     </maestrano_sales_model_service_quote_submit_failure>
                 </observers>
             </sales_model_service_quote_submit_failure>
-            <sales_order_item_cancel>
-                <observers>
-                    <maestrano_sales_order_item_cancel>
-                        <class>Maestrano_Connec_Model_InventoryObserver</class>
-                        <method>cancelOrderItem</method>
-                    </maestrano_sales_order_item_cancel>
-                </observers>
-            </sales_order_item_cancel>
             <sales_order_creditmemo_save_after>
                 <observers>
                     <maestrano_sales_order_creditmemo_save_after>
@@ -141,7 +133,6 @@
                     </maestrano_sales_order_creditmemo_save_after>
                 </observers>
             </sales_order_creditmemo_save_after>
-
         </events>
     </global>
 </config> 

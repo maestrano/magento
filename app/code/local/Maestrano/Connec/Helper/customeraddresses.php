@@ -57,6 +57,8 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
     {
         $customer_hash = array();
 
+        //Mage::log("Maestrano_Connec_Helper_Customeraddresses::mapModelToConnecResource - address to map: " . print_r($address->getData(), 1));
+
         if ($this->isDefaultBilling($address) || $this->isDefaultShipping($address)) {
             $customer_hash['address_home'] = array();
 
@@ -136,7 +138,7 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
      * @param Mage_Customer_Model_Address $model
      * @return bool|void
      */
-    protected function pushToConnec($model) {
+    public function pushToConnec($model) {
         // Find local id
         $customer_id = $model->getCustomer()->getId();
         Mage::log("Maestrano_Connec_Helper_Customeraddresses::pushToConnec entity=$this->connec_entity_name, customer_id=$customer_id");
