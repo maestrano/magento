@@ -57,82 +57,91 @@
             <!-- Customers -->
             <customer_save_after>
                 <observers>
-                    <maestrano_connec_model_customer_save_after>
-                        <type>singleton</type>
+                    <maestrano_customer_save_after>
                         <class>Maestrano_Connec_Model_CustomersObserver</class>
                         <method>customerSaveAfter</method>
-                    </maestrano_connec_model_customer_save_after>
+                    </maestrano_customer_save_after>
                 </observers>
             </customer_save_after>
             <customer_delete_after>
                 <observers>
-                    <maestrano_connec_model_customer_delete_after>
-                        <type>singleton</type>
+                    <maestrano_customer_delete_after>
                         <class>Maestrano_Connec_Model_CustomersObserver</class>
                         <method>customerDeleteAfter</method>
-                    </maestrano_connec_model_customer_delete_after>
+                    </maestrano_customer_delete_after>
                 </observers>
             </customer_delete_after>
 
             <!-- CustomerAddresses -->
             <customer_address_save_after>
                 <observers>
-                    <maestrano_connec_model_customer_address_save_after>
-                        <type>singleton</type>
+                    <maestrano_customer_address_save_after>
                         <class>Maestrano_Connec_Model_CustomerAddressesObserver</class>
                         <method>customerAddressSaveAfter</method>
-                    </maestrano_connec_model_customer_address_save_after>
+                    </maestrano_customer_address_save_after>
                 </observers>
             </customer_address_save_after>
 
             <!-- Products -->
             <catalog_product_save_after>
                 <observers>
-                    <maestrano_connec_model_catalog_product_save_after>
-                        <type>singleton</type>
+                    <maestrano_catalog_product_save_after>
                         <class>Maestrano_Connec_Model_ProductsObserver</class>
                         <method>catalogProductSaveAfter</method>
-                    </maestrano_connec_model_catalog_product_save_after>
+                    </maestrano_catalog_product_save_after>
                 </observers>
             </catalog_product_save_after>
             <catalog_product_delete_after>
                 <observers>
-                    <maestrano_connec_model_catalog_product_delete_after>
-                        <type>singleton</type>
+                    <maestrano_catalog_product_delete_after>
                         <class>Maestrano_Connec_Model_ProductsObserver</class>
                         <method>catalogProductDeleteAfter</method>
-                    </maestrano_connec_model_catalog_product_delete_after>
+                    </maestrano_catalog_product_delete_after>
                 </observers>
             </catalog_product_delete_after>
 
             <!-- Inventory -->
-            <cataloginventory_stock_item_save_after>
+            <cataloginventory_stock_item_save_commit_after>
                 <observers>
-                    <maestrano_connec_model_cataloginventory_stock_item_save_after>
-                        <type>singleton</type>
+                    <maestrano_cataloginventory_stock_item_save_commit_after>
                         <class>Maestrano_Connec_Model_InventoryObserver</class>
-                        <method>cataloginventoryStockItemSaveAfter</method>
-                    </maestrano_connec_model_cataloginventory_stock_item_save_after>
+                        <method>catalogInventorySave</method>
+                    </maestrano_cataloginventory_stock_item_save_commit_after>
                 </observers>
-            </cataloginventory_stock_item_save_after>
-            <cataloginventory_stock_item_delete_after>
+            </cataloginventory_stock_item_save_commit_after>
+            <sales_model_service_quote_submit_before>
                 <observers>
-                    <maestrano_connec_model_cataloginventory_stock_item_delete_after>
-                        <type>singleton</type>
+                    <maestrano_sales_model_service_quote_submit_before>
                         <class>Maestrano_Connec_Model_InventoryObserver</class>
-                        <method>cataloginventoryStockItemDeleteAfter</method>
-                    </maestrano_connec_model_cataloginventory_stock_item_delete_after>
+                        <method>subtractQuoteInventory</method>
+                    </maestrano_sales_model_service_quote_submit_before>
                 </observers>
-            </cataloginventory_stock_item_delete_after>
-            <checkout_submit_all_after>
+            </sales_model_service_quote_submit_before>
+            <sales_model_service_quote_submit_failure>
                 <observers>
-                    <maestrano_connec_model_checkout_submit_all_after>
-                        <type>singleton</type>
+                    <maestrano_sales_model_service_quote_submit_failure>
                         <class>Maestrano_Connec_Model_InventoryObserver</class>
-                        <method>checkoutSubmitAllAfter</method>
-                    </maestrano_connec_model_checkout_submit_all_after>
+                        <method>revertQuoteInventory</method>
+                    </maestrano_sales_model_service_quote_submit_failure>
                 </observers>
-            </checkout_submit_all_after>
+            </sales_model_service_quote_submit_failure>
+            <sales_order_item_cancel>
+                <observers>
+                    <maestrano_sales_order_item_cancel>
+                        <class>Maestrano_Connec_Model_InventoryObserver</class>
+                        <method>cancelOrderItem</method>
+                    </maestrano_sales_order_item_cancel>
+                </observers>
+            </sales_order_item_cancel>
+            <sales_order_creditmemo_save_after>
+                <observers>
+                    <maestrano_sales_order_creditmemo_save_after>
+                        <class>Maestrano_Connec_Model_InventoryObserver</class>
+                        <method>refundOrderInventory</method>
+                    </maestrano_sales_order_creditmemo_save_after>
+                </observers>
+            </sales_order_creditmemo_save_after>
+
         </events>
     </global>
 </config> 
