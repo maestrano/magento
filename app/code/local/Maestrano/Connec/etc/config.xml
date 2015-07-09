@@ -5,6 +5,17 @@
             <version>0.1.0</version>
         </Maestrano_Connec>
     </modules>
+    <frontend>
+        <routers>
+            <connec>
+                <use>standard</use>
+                <args>
+                    <module>Maestrano_Connec</module>
+                    <frontName>connec</frontName>
+                </args>
+            </connec>
+        </routers>
+    </frontend>
     <global>
         <models>
             <connec>
@@ -75,24 +86,6 @@
             </customer_address_save_after>
 
             <!-- Products -->
-            <catalog_product_new_action>
-                <observers>
-                    <maestrano_connec_model_catalog_product_new_action>
-                        <type>singleton</type>
-                        <class>Maestrano_Connec_Model_ProductsObserver</class>
-                        <method>productNewAction</method>
-                    </maestrano_connec_model_catalog_product_new_action>
-                </observers>
-            </catalog_product_new_action>
-            <catalog_product_save_before>
-                <observers>
-                    <maestrano_connec_model_catalog_product_save_before>
-                        <type>singleton</type>
-                        <class>Maestrano_Connec_Model_ProductsObserver</class>
-                        <method>catalogProductSaveBefore</method>
-                    </maestrano_connec_model_catalog_product_save_before>
-                </observers>
-            </catalog_product_save_before>
             <catalog_product_save_after>
                 <observers>
                     <maestrano_connec_model_catalog_product_save_after>
@@ -113,15 +106,24 @@
             </catalog_product_delete_after>
 
             <!-- Inventory -->
-            <cataloginventory_stock_item_save_commit_after>
+            <cataloginventory_stock_item_save_after>
                 <observers>
-                    <maestrano_connec_model_cataloginventory_stock_item_save_commit_after>
+                    <maestrano_connec_model_cataloginventory_stock_item_save_after>
                         <type>singleton</type>
                         <class>Maestrano_Connec_Model_InventoryObserver</class>
-                        <method>cataloginventoryStockItemSaveCommitAfter</method>
-                    </maestrano_connec_model_cataloginventory_stock_item_save_commit_after>
+                        <method>cataloginventoryStockItemSaveAfter</method>
+                    </maestrano_connec_model_cataloginventory_stock_item_save_after>
                 </observers>
-            </cataloginventory_stock_item_save_commit_after>
+            </cataloginventory_stock_item_save_after>
+            <cataloginventory_stock_item_delete_after>
+                <observers>
+                    <maestrano_connec_model_cataloginventory_stock_item_delete_after>
+                        <type>singleton</type>
+                        <class>Maestrano_Connec_Model_InventoryObserver</class>
+                        <method>cataloginventoryStockItemDeleteAfter</method>
+                    </maestrano_connec_model_cataloginventory_stock_item_delete_after>
+                </observers>
+            </cataloginventory_stock_item_delete_after>
             <checkout_submit_all_after>
                 <observers>
                     <maestrano_connec_model_checkout_submit_all_after>

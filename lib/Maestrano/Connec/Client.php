@@ -236,4 +236,9 @@ class Maestrano_Connec_Client
     
     return array( 'body' => $rbody, 'code' => $rcode);
   }
+
+  private function handleCurlError($errno, $message)
+  {
+    throw new Maestrano_Api_Error("curl_errno: $errno, message: $message");
+  }
 }
