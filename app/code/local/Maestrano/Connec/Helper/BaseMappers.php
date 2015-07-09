@@ -256,7 +256,7 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
     }
 
     // Transform an Magento Model into a Connec Resource and push it to Connec
-    protected function pushToConnec($model) {
+    public function pushToConnec($model) {
         // Find local id
         $local_id = $model->getId();
         Mage::log("Maestrano_Connec_Helper_BaseMappers::pushToConnec entity=$this->connec_entity_name, local_id=$local_id");

@@ -4,6 +4,9 @@
         <Maestrano_Sso>
             <version>0.1.0</version>
         </Maestrano_Sso>
+        <Mage_AdminNotification>
+            <active>false</active>
+        </Mage_AdminNotification>
     </modules>
     <frontend>
         <routers>
