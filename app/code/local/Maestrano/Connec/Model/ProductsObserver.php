@@ -9,6 +9,13 @@ class Maestrano_Connec_Model_ProductsObserver
     {
         $product = $observer->getEvent()->getProduct();
 
+        /** @var Maestrano_Connec_Helper_Observerlockhelper $locker */
+        $locker = Mage::helper('mnomap/observerlockhelper');
+        if ($locker->isLockedGlobally()) {
+            Mage::log("## Maestrano_Connec_Model_ProductsObserver::catalogProductSaveAfter - Observers are locked globally");
+            return;
+        }
+
         $observerLock = $product->getObserverLock();
         if ($observerLock) {
             Mage::log("## Maestrano_Connec_Model_ProductsObserver::catalogProductSaveAfter - Observers are locked for product " . $product->getId());

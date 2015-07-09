@@ -12,7 +12,13 @@ class Maestrano_Connec_Model_CustomersObserver
         /** @var Maestrano_Connec_Helper_Observerlockhelper $locker */
         $locker = Mage::helper('mnomap/observerlockhelper');
         if ($locker->isLockedGlobally()) {
-            Mage::log("## Maestrano_Connec_Model_CustomerAddressesObserver::customerAddressSaveAfter - Observers are locked globally");
+            Mage::log("## Maestrano_Connec_Model_CustomersObserver::customerSaveAfter - Observers are locked globally");
+            return;
+        }
+
+        $observerLock = $customer->getObserverLock();
+        if ($observerLock) {
+            Mage::log("## Maestrano_Connec_Model_CustomersObserver::customerSaveAfter - Observers are locked for customer " . $customer->getId());
             return;
         }
 
@@ -31,13 +37,6 @@ class Maestrano_Connec_Model_CustomersObserver
     public function customerDeleteAfter(Varien_Event_Observer $observer)
     {
         $customer = $observer->getEvent()->getCustomer();
-
-        /** @var Maestrano_Connec_Helper_Observerlockhelper $locker */
-        $locker = Mage::helper('mnomap/observerlockhelper');
-        if ($locker->isLockedGlobally()) {
-            Mage::log("## Maestrano_Connec_Model_CustomerAddressesObserver::customerAddressSaveAfter - Observers are locked globally");
-            return;
-        }
 
         // Delete customer in connec_mnomapid!
         Mage::log('## Maestrano_Connec_Model_CustomersObserver::customerDeleteAfter: deleting customer ' . $customer->getId());

@@ -19,7 +19,7 @@ class Maestrano_Connec_DataController extends Mage_Core_Controller_Front_Action
             $notification = json_decode(file_get_contents('php://input'), false);
             $entity_name = strtoupper(trim($notification->entity));
             $entity_id = $notification->id;
-            
+
             $locker->lockGlobally();
 
             Mage::log("Maestrano_Connec_DataController::SuscribeAction - received notification: " . json_encode($notification));

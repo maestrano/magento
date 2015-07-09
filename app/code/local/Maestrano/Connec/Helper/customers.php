@@ -71,7 +71,7 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
                 $address->setTelephone($resource_hash['phone_home']['landline']);
             }
             if (array_key_exists('phone_home', $resource_hash) && array_key_exists('fax', $resource_hash['phone_home'])) {
-                $address->setTelephone($resource_hash['phone_home']['fax']);
+                $address->setFax($resource_hash['phone_home']['fax']);
             }
         }
 
@@ -86,9 +86,15 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
             $address->setStreetFull($address_hash['line1'] . "\n" . $address_hash['line2']);
         }
         if (array_key_exists('city', $address_hash)) { $address->setCity($address_hash['city']); }
-        if (array_key_exists('region', $address_hash)) { $address->setRegion($address_hash['region']); }
         if (array_key_exists('postal_code', $address_hash)) { $address->setPostcode($address_hash['postal_code']); }
-        if (array_key_exists('country', $address_hash)) { $address->setCountryId( $address_hash['country']); }
+        if (array_key_exists('region', $address_hash)) { $address->setCountry($address_hash['country']); }
+        if (array_key_exists('region', $address_hash)) {
+            $address->setRegion($address_hash['region']);
+            $region = $this->findRegionByName($address_hash['region'], $address_hash['country']);
+            if (!empty($region)) {
+                $address->setRegionId($region->getRegionId());
+            }
+        }
 
         $address->setIsDefaultBilling($isBilling);
         $address->setIsDefaultShipping($isShipping);
@@ -98,6 +104,28 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
         // Lock the observer
         $address->setOberverLock(true);
         $address->save();
+    }
+
+    private function findCountryByName($name) {
+        $countryCollection = Mage::getModel('directory/country')->getCollection();
+        foreach ($countryCollection as $country) {
+            if ($name == $country->getName()) {
+                return $country;
+            }
+        }
+        return null;
+    }
+
+    private function findRegionByName($name, $countryId) {
+        $regionCollection = Mage::getModel('directory/region')->getResourceCollection()
+            ->addCountryFilter($countryId)
+            ->load();
+        foreach ($regionCollection as $region) {
+            if ($name == $region->getName()) {
+                return $region;
+            }
+        }
+        return null;
     }
 
     // Map the Connec resource attributes onto the Magento model

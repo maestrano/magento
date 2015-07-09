@@ -83,9 +83,12 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
      */
     private function isDefaultBilling($address)
     {
-        $defaultBillingId = $address->getCustomer()->getDefaultBillingAddress()->getId();
-        if ($defaultBillingId === $address->getId()) {
-            return true;
+        $defaultBilling = $address->getCustomer()->getDefaultBillingAddress();
+        if ($defaultBilling) {
+            $defaultBillingId = $defaultBilling->getId();
+            if ($defaultBillingId === $address->getId()) {
+                return true;
+            }
         }
         return false;
     }
@@ -96,9 +99,12 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
      */
     private function isDefaultShipping($address)
     {
-        $defaultShippingId = $address->getCustomer()->getDefaultShippingAddress()->getId();
-        if ($defaultShippingId === $address->getId()) {
-            return true;
+        $defaultShipping = $address->getCustomer()->getDefaultShippingAddress();
+        if ($defaultShipping) {
+            $defaultShippingId = $defaultShipping->getId();
+            if ($defaultShippingId === $address->getId()) {
+                return true;
+            }
         }
         return false;
     }
