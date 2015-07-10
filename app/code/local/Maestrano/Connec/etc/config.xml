@@ -101,14 +101,6 @@
             </catalog_product_delete_after>
 
             <!-- Inventory -->
-            <cataloginventory_stock_item_save_commit_after>
-                <observers>
-                    <maestrano_cataloginventory_stock_item_save_commit_after>
-                        <class>Maestrano_Connec_Model_InventoryObserver</class>
-                        <method>catalogInventorySave</method>
-                    </maestrano_cataloginventory_stock_item_save_commit_after>
-                </observers>
-            </cataloginventory_stock_item_save_commit_after>
             <sales_model_service_quote_submit_before>
                 <observers>
                     <maestrano_sales_model_service_quote_submit_before>
@@ -125,6 +117,14 @@
                     </maestrano_sales_model_service_quote_submit_failure>
                 </observers>
             </sales_model_service_quote_submit_failure>
+            <sales_order_item_cancel>
+                <observers>
+                    <maestrano_sales_order_item_cancel>
+                        <class>Maestrano_Connec_Model_InventoryObserver</class>
+                        <method>cancelOrderItem</method>
+                    </maestrano_sales_order_item_cancel>
+                </observers>
+            </sales_order_item_cancel>
             <sales_order_creditmemo_save_after>
                 <observers>
                     <maestrano_sales_order_creditmemo_save_after>

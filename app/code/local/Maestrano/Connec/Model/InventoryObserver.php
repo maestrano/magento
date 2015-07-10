@@ -3,29 +3,6 @@
 class Maestrano_Connec_Model_InventoryObserver
 {
     /**
-     * Gets triggered on sale
-     * @param Varien_Event_Observer $observer
-     */
-    public function catalogInventorySave(Varien_Event_Observer $observer)
-    {
-        $item = $observer->getEvent()->getItem();
-
-        if ((int)$item->getData('qty') != (int)$item->getOrigData('qty')) {
-            $product = $item->getProduct();
-            if (is_null($product)) {
-                $product = Mage::getModel('catalog/product')->load($item->getProductId());
-            }
-
-            $product->getStockItem()->setQty($item->getQty());
-            Mage::log('## Maestrano_Connec_Model_InventoryObserver::catalogInventorySave: updating product:' . $product->getId() . ', qty: ' . $product->getStockItem()->getQty());
-
-            /** @var Maestrano_Connec_Helper_Products $helper */
-            $helper = Mage::helper('mnomap/products');
-            $helper->pushToConnec($product);
-        }
-    }
-
-    /**
      * Is triggered when a customer place an order
      * @param Varien_Event_Observer $observer
      */
@@ -33,21 +10,20 @@ class Maestrano_Connec_Model_InventoryObserver
     {
         $quote = $observer->getEvent()->getQuote();
 
-        Mage::log('## Maestrano_Connec_Model_InventoryObserver::subtractQuoteInventory: quote:' . print_r($quote->getData(), 1));
-
         foreach ($quote->getAllItems() as $item) {
-            if ($item->getProduct()->getTypeId() != 'simple'){
+            $product = $item->getProduct();
+            if ($product->getTypeId() == 'configurable' || $product->getTypeId() == 'bundle' || $product->getTypeId() == 'grouped'){
                 continue;
             }
 
             // Update those items
             $delta = ($item->getTotalQty() * -1);
             Mage::log('## Maestrano_Connec_Model_InventoryObserver::subtractQuoteInventory: updating product:' . $item->getProduct()->getId() . ', qty: ' . $item->getProduct()->getStockItem()->getQty() . ", delta: " . $delta);
-            $newQty = $item->getProduct()->getStockItem()->getQty() + $delta;
-            $item->getProduct()->getStockItem()->setQty($newQty);
+            $newQty = $product->getStockItem()->getQty() + $delta;
+            $product->getStockItem()->setQty($newQty);
             /** @var Maestrano_Connec_Helper_Products $helper */
             $helper = Mage::helper('mnomap/products');
-            $helper->pushToConnec($item->getProduct());
+            $helper->pushToConnec($product);
         }
     }
 
@@ -55,15 +31,13 @@ class Maestrano_Connec_Model_InventoryObserver
     {
         $quote = $observer->getEvent()->getQuote();
 
-        Mage::log('## Maestrano_Connec_Model_InventoryObserver::revertQuoteInventory: quote:' . print_r($quote->getData(), 1));
-
         foreach ($quote->getAllItems() as $item) {
             $product = $item->getProduct();
             if (is_null($product)) {
                 $product = Mage::getModel('catalog/product')->load($item->getProductId());
             }
 
-            if ($product->getTypeId() != 'simple'){
+            if ($product->getTypeId() == 'configurable' || $product->getTypeId() == 'bundle' || $product->getTypeId() == 'grouped'){
                 continue;
             }
 
@@ -75,11 +49,36 @@ class Maestrano_Connec_Model_InventoryObserver
         }
     }
 
+    /**
+     * Is triggered when an order is canceled on admin panel
+     * @param Varien_Event_Observer $observer
+     */
+    public function cancelOrderItem(Varien_Event_Observer $observer)
+    {
+        $item = $observer->getEvent()->getItem();
+        $product = $item->getProduct();
+        if (is_null($product)) {
+            $product = Mage::getModel('catalog/product')->load($item->getProductId());
+        }
+
+        if ($product->getTypeId() == 'configurable' || $product->getTypeId() == 'bundle' || $product->getTypeId() == 'grouped'){
+            return;
+        }
+
+        // Update this item
+        Mage::log('## Maestrano_Connec_Model_InventoryObserver::cancelOrderItem: updating product:' . $product->getId() . ', qty: ' . $product->getStockItem()->getQty());
+        /** @var Maestrano_Connec_Helper_Products $helper */
+        $helper = Mage::helper('mnomap/products');
+        $helper->pushToConnec($product);
+    }
+
+    /**
+     * Is triggered when a credit memo is created on an invoce to refund a customer
+     * @param Varien_Event_Observer $observer
+     */
     public function refundOrderInventory(Varien_Event_Observer $observer)
     {
         $creditmemo = $observer->getEvent()->getCreditmemo();
-
-        Mage::log('## Maestrano_Connec_Model_InventoryObserver::refundOrderInventory: creditmemo:' . print_r($creditmemo->getData(), 1));
 
         foreach ($creditmemo->getAllItems() as $item) {
             $product = $item->getProduct();
@@ -87,7 +86,7 @@ class Maestrano_Connec_Model_InventoryObserver
                 $product = Mage::getModel('catalog/product')->load($item->getProductId());
             }
 
-            if ($product->getTypeId() != 'simple'){
+            if ($product->getTypeId() == 'configurable' || $product->getTypeId() == 'bundle' || $product->getTypeId() == 'grouped'){
                 continue;
             }
 
