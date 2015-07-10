@@ -7,7 +7,7 @@ class Maestrano_Connec_DataController extends Mage_Core_Controller_Front_Action
         Maestrano::configure('maestrano.json');
     }
 
-    public function SuscribeAction()
+    public function SubscribeAction()
     {
         if(!Maestrano::param('connec.enabled')) { return false; }
 

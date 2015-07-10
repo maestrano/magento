@@ -26,7 +26,7 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
     }
 
     protected function isNewByConnecId($connec_id) {
-        $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByMnoIdAndEntityName($connec_id, $this->connec_entity_name, $this->local_entity_name);
+        $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByMnoIdAndEntityName($connec_id, $this->connec_entity_name);
         if($mno_id_map) {
             Mage::log("Maestrano_Connec_Helper_BaseMappers::isNewByConnecId entity_name=$this->connec_entity_name, connec_id=" . $connec_id . " is not new.");
             return false;
@@ -107,7 +107,7 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
 
         if(is_null($entity_id)) { return null; }
 
-        $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByMnoIdAndEntityName($entity_id, $this->connec_entity_name, $this->local_entity_name);
+        $mno_id_map = Mage::getModel('connec/mnoidmap')->findMnoIdMapByMnoIdAndEntityName($entity_id, $this->connec_entity_name);
         if(!$mno_id_map) {
             // Entity does not exist locally, fetch it from Connec!
             return $this->fetchConnecResource($entity_id);
@@ -232,7 +232,7 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
 
         // Find mnoIdMapModel if exists
         $mno_id = $resource_hash['id'];
-        $mno_id_map = $mnoIdMapModel->findMnoIdMapByMnoIdAndEntityName($mno_id, $this->connec_entity_name, $this->local_entity_name);
+        $mno_id_map = $mnoIdMapModel->findMnoIdMapByMnoIdAndEntityName($mno_id, $this->connec_entity_name);
 
         if($mno_id_map) {
             Mage::log("Maestrano_Connec_Helper_BaseMappers::findOrInitializeModel found mno_id_map=" . print_r($mno_id_map, 1));
