@@ -12,8 +12,8 @@ class Maestrano_Connec_Model_Mnoidmap extends Mage_Core_Model_Abstract
         $this->_init("connec/mnoidmap");
     }
 
-    public function findMnoIdMapByMnoIdAndEntityName($mno_id, $mno_entity_name, $local_entity_name=null) {
-        return $this->getResource()->findMnoIdMapByMnoIdAndEntityName($mno_id, $mno_entity_name, $local_entity_name=null);
+    public function findMnoIdMapByMnoIdAndEntityName($mno_id, $mno_entity_name) {
+        return $this->getResource()->findMnoIdMapByMnoIdAndEntityName($mno_id, $mno_entity_name);
     }
 
     public function findMnoIdMapByLocalIdAndEntityName($local_id, $local_entity_name) {

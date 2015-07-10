@@ -6,7 +6,7 @@ class Maestrano_Connec_Model_Mysql4_Mnoidmap extends Mage_Core_Model_Mysql4_Abst
         $this->_init("connec/mnoidmap", "mnoidmap_id");
     }
 
-    public function findMnoIdMapByMnoIdAndEntityName($mno_id, $mno_entity_name, $local_entity_name=null) {
+    public function findMnoIdMapByMnoIdAndEntityName($mno_id, $mno_entity_name) {
         /*if(is_null($local_entity_name)) {
             $query = "SELECT * from mno_id_map WHERE mno_entity_guid = '$mno_id' AND mno_entity_name = '".strtoupper($mno_entity_name)."' ORDER BY deleted_flag";
         } else {
@@ -23,11 +23,6 @@ class Maestrano_Connec_Model_Mysql4_Mnoidmap extends Mage_Core_Model_Mysql4_Abst
         $select->from($this->getMainTable())
             ->where('mno_entity_guid = :mno_entity_guid')
             ->where('mno_entity_name = :mno_entity_name');
-
-        if (!is_null($local_entity_name)) {
-            $binds[] = strtoupper($local_entity_name);
-            $select->where('app_entity_name = :local_entity_name');
-        }
 
         return $adapter->fetchRow($select, $binds);
     }
