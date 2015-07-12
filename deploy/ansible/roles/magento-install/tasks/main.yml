@@ -34,7 +34,7 @@
   git: >
     repo=https://github.com/maestrano/magento.git
     dest={{ magento_root_path }}
-    version={{ magento_version }}
+    version={{ application_version }}
     accept_hostkey=yes
     ssh_opts="-o StrictHostKeyChecking=no"
     update=yes
@@ -106,6 +106,11 @@
     owner: www-data
     group: www-data
     mode: 755
+  tags:
+    - configuration
+
+- name: MySQL | Start
+  command: service mysql restart
   tags:
     - configuration
 

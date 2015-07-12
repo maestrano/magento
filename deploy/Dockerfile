@@ -8,7 +8,7 @@ ADD ansible /etc/ansible
 WORKDIR /etc/ansible
 
 # Install Dolibarr
-RUN ansible-playbook -vvv -i hosts site.yml
+RUN ansible-playbook -i hosts site.yml
 
 # Map MySQL and Apache volumes
 VOLUME ["/etc/mysql", "/var/lib/mysql", "/etc/apache2", "/etc/php5", "/var/lib/magento", "/var/log/apache2", "/var/log/mysql"]
