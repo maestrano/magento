@@ -133,6 +133,16 @@
                     </maestrano_sales_order_creditmemo_save_after>
                 </observers>
             </sales_order_creditmemo_save_after>
+
+            <!-- Sales Orders -->
+            <sales_order_place_after>
+                <observers>
+                    <maestrano_sales_order_place_after>
+                        <class>Maestrano_Connec_Model_SalesOrderObserver</class>
+                        <method>salesOrderPlaceAfter</method>
+                    </maestrano_sales_order_place_after>
+                </observers>
+            </sales_order_place_after>
         </events>
     </global>
 </config> 
