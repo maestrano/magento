@@ -9,8 +9,5 @@
         <Mage_Admin/>
       </depends>
     </Maestrano_Sso>
-    <Mage_AdminNotification>
-      <active>false</active>
-    </Mage_AdminNotification>
   </modules>
 </config>
