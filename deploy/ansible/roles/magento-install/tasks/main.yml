@@ -17,9 +17,9 @@
   shell: 'php5enmod mcrypt'
 
 - name: Magento | Ensure MySQL is running
-  service: 
-    name: mysql 
-    state: started
+  command: service mysql start
+  tags:
+    - configuration
 
 - name: Magento | Create Magento database
   mysql_db:
@@ -117,11 +117,6 @@
   tags:
     - configuration
 
-- name: MySQL | Start
-  command: service mysql restart
-  tags:
-    - configuration
-
 - name: Magento | Apply Maestrano patch
   shell: "mysql {{ magento_db_name }} -u{{magento_db_user}} -p{{magento_db_password}} < {{ item }}"
   args:
@@ -132,7 +127,7 @@
     - configuration
 
 - name: Magento | Import Connec! data
-  shell: "(nohup php shell/initialize.php 1>/dev/null 2>&1) &"
+  shell: "(nohup php shell/initialize.php 1>/var/log/apache2/magento_initialize.log 2>&1) &"
   args:
     chdir: "{{ magento_root_path }}"
   tags:
