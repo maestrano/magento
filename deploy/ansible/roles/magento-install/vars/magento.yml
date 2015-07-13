@@ -1,0 +1,18 @@
+# Magento installation
+magento_root_path: /var/lib/magento/webapp
+magento_db_name: magentodb
+magento_db_user: magentouser
+magento_db_password: password
+magento_admin_email: admin@example.com
+magento_admin_firstname: Store
+magento_admin_lastname: Owner
+magento_admin_username: admin
+magento_admin_password: password123123
+
+# Magento default configuration
+sso_enabled: "false"
+connec_enabled: "false"
+maestrano_environment: "production"
+server_hostname: "server_hostname"
+api_key: "api_key"
+api_secret: "api_secret"
