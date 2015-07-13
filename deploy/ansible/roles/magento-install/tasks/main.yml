@@ -17,9 +17,7 @@
   shell: 'php5enmod mcrypt'
 
 - name: Magento | Ensure MySQL is running
-  service: 
-    name: mysql 
-    state: started
+  command: service mysql start
   tags:
     - configuration
 
