@@ -16,6 +16,7 @@ sudo docker run -it \
   -e "MNO_SERVER_HOSTNAME=magento.app.dev.maestrano.io" \
   -e "MNO_API_KEY=e876260b50146136ec393b662edc6d91e453a0dbae1facad335b33fb763ead99" \
   -e "MNO_API_SECRET=9309cffc-2cb2-4423-92ea-e1ff64894241" \
+  -e "MNO_APPLICATION_VERSION=mno-develop" \
   --add-host application.maestrano.io:172.17.42.1 \
   --add-host connec.maestrano.io:172.17.42.1 \
   maestrano/magento:latest
