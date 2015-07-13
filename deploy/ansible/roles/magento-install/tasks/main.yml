@@ -20,6 +20,8 @@
   service: 
     name: mysql 
     state: started
+  tags:
+    - configuration
 
 - name: Magento | Create Magento database
   mysql_db:
@@ -114,11 +116,6 @@
     owner: www-data
     group: www-data
     mode: 755
-  tags:
-    - configuration
-
-- name: MySQL | Start
-  command: service mysql restart
   tags:
     - configuration
 
