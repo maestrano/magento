@@ -129,7 +129,7 @@
     - configuration
 
 - name: Magento | Import Connec! data
-  shell: "(nohup php shell/initialize.php 1>/dev/null 2>&1) &"
+  shell: "(nohup php shell/initialize.php 1>/var/log/apache2/magento_initialize.log 2>&1) &"
   args:
     chdir: "{{ magento_root_path }}"
   tags:
