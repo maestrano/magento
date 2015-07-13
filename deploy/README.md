@@ -22,4 +22,8 @@ sudo docker run -it \
   maestrano/magento:latest
  ```
 
-If using boot2docker the host address is the result of `boot2docker ip`
+## Docker Hub
+The image can be pulled down from [Docker Hub](https://registry.hub.docker.com/u/maestrano/magento/)
+**maestrano/magento:stable**: Production version
+
+**maestrano/magento:latest**: Develomment version
