@@ -1,0 +1,9 @@
+.DS_Store
+.idea/
+
+/app/etc/local.xml
+var/cache
+var/session
+var/log
+var/report
+var/_data_sequence
