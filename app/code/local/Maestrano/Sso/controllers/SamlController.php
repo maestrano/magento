@@ -62,7 +62,7 @@ class Maestrano_Sso_SamlController extends Mage_Core_Controller_Front_Action
                     Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - User is logged in!");
                     $startupPageUrl = Mage::getModel('admin/user')->getStartupPageUrl();
                     Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - startupPageUrl: " . $startupPageUrl);
-                    echo $redirectUrl = Mage::getSingleton('adminhtml/url')->getUrl($startupPageUrl, array('_current' => false));
+                    $redirectUrl = Mage::getSingleton('adminhtml/url')->getUrl($startupPageUrl, array('_current' => false));
                     Mage::log("## Maestrano_Sso_SamlController->ConsumeAction - Redirecting to: " . $redirectUrl);
                     header('Location: ' . $redirectUrl);
                     exit;
