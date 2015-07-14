@@ -135,14 +135,23 @@
             </sales_order_creditmemo_save_after>
 
             <!-- Sales Orders -->
-            <sales_order_place_after>
+            <sales_order_save_after>
                 <observers>
-                    <maestrano_sales_order_place_after>
+                    <maestrano_sales_order_save_after>
                         <class>Maestrano_Connec_Model_SalesOrderObserver</class>
-                        <method>salesOrderPlaceAfter</method>
-                    </maestrano_sales_order_place_after>
+                        <method>salesOrderSaveAfter</method>
+                    </maestrano_sales_order_save_after>
                 </observers>
-            </sales_order_place_after>
+            </sales_order_save_after>
+            <sales_order_invoice_save_after>
+                <observers>
+                    <maestrano_sales_order_invoice_save_after>
+                        <class>Maestrano_Connec_Model_SalesOrderObserver</class>
+                        <method>salesOrderInvoiceSaveAfter</method>
+                    </maestrano_sales_order_invoice_save_after>
+                </observers>
+            </sales_order_invoice_save_after>
+
         </events>
     </global>
 </config> 
