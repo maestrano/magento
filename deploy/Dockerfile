@@ -11,4 +11,4 @@ WORKDIR /etc/ansible
 RUN ansible-playbook -i hosts site.yml
 
 # Map Magento mutable volumes
-VOLUME ["/var/lib/magento"]
+VOLUME ["/etc/mysql", "/var/lib/mysql", "/etc/apache2", "/etc/php5", "/var/log/apache2", "/var/log/mysql", "/var/lib/magento"]
