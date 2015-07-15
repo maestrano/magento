@@ -58,6 +58,10 @@ abstract class Maestrano_Connec_Helper_BaseMappers extends Mage_Core_Helper_Abst
         return $date->format('c');
     }
 
+    protected function isSetArray($key, $array) {
+        return (array_key_exists($key, $array) && !empty($array[$key]));
+    }
+
     // Overwrite me!
     // Return a local Model by id
     abstract protected function loadModelById($local_id);

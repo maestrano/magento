@@ -24,30 +24,50 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
     public function afterSaveConnecResource($resource_hash, $model, $oberverLock) {
         Mage::log("Maestrano_Connec_Helper_Customers::afterSaveConnecResource - mapped customer id: " . $model->getId());
 
-        // Only if a new ressource
-        if($this->isNewByConnecId($resource_hash['id'])) {
-            // There is at least an address
-            if (array_key_exists('address_home', $resource_hash)) {
-                // There is 2 addresses coming from connec
-                if (array_key_exists('billing', $resource_hash['address_home']) && array_key_exists('shipping', $resource_hash['address_home'])) {
-                    // It the same address
-                    if ($resource_hash['address_home']['billing'] === $resource_hash['address_home']['shipping']) {
-                        // If the same, add one address as default for both
-                        $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['billing'], true, true);
-                    } else {
-                        // Add billing address
-                        $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['billing'], true);
-
-                        // Add shipping address
-                        $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['shipping'], false, true);
-                    }
-                } elseif (array_key_exists('billing', $resource_hash['address_home'])) {
-                    // Add connec billing address
+        // There is at least an address
+        if ($this->isSetArray('address_home', $resource_hash)
+            && ($this->isSetArray('billing', $resource_hash['address_home']) || $this->isSetArray('shipping', $resource_hash['address_home']))) {
+            // There is 2 addresses coming from connec
+            if ($this->isSetArray('billing', $resource_hash['address_home']) && $this->isSetArray('shipping', $resource_hash['address_home'])) {
+                // It the same address
+                if ($resource_hash['address_home']['billing'] === $resource_hash['address_home']['shipping']) {
+                    // If the same, add one address as default for both
                     $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['billing'], true, true);
-                } elseif (array_key_exists('shipping', $resource_hash['address_home'])) {
-                    // Add connec shipping address
-                    $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['shipping'], true, true);
+                } else {
+                    // Add billing address
+                    $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['billing'], true);
+
+                    // Add shipping address
+                    $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['shipping'], false, true);
                 }
+            } elseif ($this->isSetArray('billing', $resource_hash['address_home'])) {
+                // Add connec billing address
+                $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['billing'], true, true);
+            } elseif ($this->isSetArray('shipping', $resource_hash['address_home'])) {
+                // Add connec shipping address
+                $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_home']['shipping'], true, true);
+            }
+        } elseif ($this->isSetArray('address_work', $resource_hash)
+            && ($this->isSetArray('billing', $resource_hash['address_work']) || $this->isSetArray('shipping', $resource_hash['address_work']))) {
+            // There is 2 addresses coming from connec
+            if ($this->isSetArray('billing', $resource_hash['address_work']) && $this->isSetArray('shipping', $resource_hash['address_work'])) {
+                // It the same address
+                if ($resource_hash['address_work']['billing'] === $resource_hash['address_work']['shipping']) {
+                    // If the same, add one address as default for both
+                    $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_work']['billing'], true, true);
+                } else {
+                    // Add billing address
+                    $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_work']['billing'], true);
+
+                    // Add shipping address
+                    $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_work']['shipping'], false, true);
+                }
+            } elseif ($this->isSetArray('billing', $resource_hash['address_work'])) {
+                // Add connec billing address
+                $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_work']['billing'], true, true);
+            } elseif ($this->isSetArray('shipping', $resource_hash['address_work'])) {
+                // Add connec shipping address
+                $this->addConnecAddressToModel($model->getId(), $resource_hash, $resource_hash['address_work']['shipping'], true, true);
             }
         }
     }
@@ -76,23 +96,22 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
         }
 
         // Mapped values
-        if (array_key_exists('attention', $address_hash)) {
-            list($firstname, $lastname) = explode(' ', $address_hash['attention'], 2);
-            $address->setFirstname($firstname);
-            $address->setLastname($lastname);
-        }
-
+        if (array_key_exists('attention_first_name', $address_hash)) { $address->setFirstname($address_hash['attention_first_name']); }
+        if (array_key_exists('attention_last_name', $address_hash)) { $address->setLastname($address_hash['attention_last_name']); }
         if (array_key_exists('line1', $address_hash) && array_key_exists('line2', $address_hash)) {
             $address->setStreetFull($address_hash['line1'] . "\n" . $address_hash['line2']);
         }
         if (array_key_exists('city', $address_hash)) { $address->setCity($address_hash['city']); }
         if (array_key_exists('postal_code', $address_hash)) { $address->setPostcode($address_hash['postal_code']); }
-        if (array_key_exists('country', $address_hash)) { $address->setCountry($address_hash['country']); }
+        // Connec return the country id (ISO2)
+        if (array_key_exists('country', $address_hash)) { $address->setCountryId($address_hash['country']); }
+        // Set by default the returned region (free input) and look if it's possible to find and id for lists
         if (array_key_exists('region', $address_hash)) {
             $address->setRegion($address_hash['region']);
             $region = $this->findRegionByName($address_hash['region'], $address_hash['country']);
             if (!empty($region)) {
-                $address->setRegionId($region->getRegionId());
+                $address->setRegionId($region->getId());
+                $address->setRegion($region->getName());
             }
         }
 
@@ -104,16 +123,6 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
         // Lock the observer
         $address->setOberverLock(true);
         $address->save();
-    }
-
-    private function findCountryByName($name) {
-        $countryCollection = Mage::getModel('directory/country')->getCollection();
-        foreach ($countryCollection as $country) {
-            if ($name == $country->getName()) {
-                return $country;
-            }
-        }
-        return null;
     }
 
     private function findRegionByName($name, $countryId) {

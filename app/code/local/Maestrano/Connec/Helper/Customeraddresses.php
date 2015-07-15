@@ -29,26 +29,6 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
     }
 
     /**
-     * @param array $address_hash
-     * @param Mage_Customer_Model_Address $address
-     */
-    protected function mapConnecAddressToModel($address_hash, &$address)
-    {
-        // Mapped values
-        if (array_key_exists('attention', $address_hash)) {
-            list($firstname, $lastname) = explode(' ', $address_hash['attention'], 2);
-            $address->setFirstname($firstname);
-            $address->setLastname($lastname);
-        }
-        if (array_key_exists('line1', $address_hash)) { $address->setStreet1($address_hash['line1']); }
-        if (array_key_exists('line2', $address_hash)) { $address->setStreet2($address_hash['line2']); }
-        if (array_key_exists('city', $address_hash)) { $address->setCity($address_hash['city']); }
-        if (array_key_exists('region', $address_hash)) { $address->setRegion($address_hash['region']); }
-        if (array_key_exists('postal_code', $address_hash)) { $address->setPostcode($address_hash['postal_code']); }
-        if (array_key_exists('country', $address_hash)) { $address->setCountry( $address_hash['country']); }
-    }
-
-    /**
      * Map the Magento model to a Connec resource hash
      * @param Mage_Customer_Model_Address $address
      * @return array
@@ -60,17 +40,17 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
         //Mage::log("Maestrano_Connec_Helper_Customeraddresses::mapModelToConnecResource - address to map: " . print_r($address->getData(), 1));
 
         if ($this->isDefaultBilling($address) || $this->isDefaultShipping($address)) {
-            $customer_hash['address_home'] = array();
+            $customer_hash['address_work'] = array();
 
             if ($this->isDefaultBilling($address)) {
                 $customer_hash['phone_home'] = array();
                 $customer_hash['phone_home']['landline'] = $address->getTelephone();
                 $customer_hash['phone_home']['fax'] = $address->getFax();
-                $customer_hash['address_home']['billing'] = $this->mapModelAddressToConnecResource($address);
+                $customer_hash['address_work']['billing'] = $this->mapModelAddressToConnecResource($address);
             }
 
             if ($this->isDefaultShipping($address)) {
-                $customer_hash['address_home']['shipping'] = $this->mapModelAddressToConnecResource($address);
+                $customer_hash['address_work']['shipping'] = $this->mapModelAddressToConnecResource($address);
             }
         }
 
@@ -120,7 +100,8 @@ class Maestrano_Connec_Helper_Customeraddresses extends Maestrano_Connec_Helper_
         $address_hash = array();
 
         // Mapped values
-        $address_hash['attention'] = $address->getFirstname() . ' ' . $address->getLastname();
+        $address_hash['attention_first_name'] = $address->getFirstname();
+        $address_hash['attention_last_name'] = $address->getLastname();
         $address_hash['line1'] = $address->getStreet1();
         $address_hash['line2'] = $address->getStreet2();
         $address_hash['city'] = $address->getCity();
