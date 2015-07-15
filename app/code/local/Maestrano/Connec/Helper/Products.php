@@ -69,8 +69,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
                 $product->setShortDescription($product_hash['description']);
             }
 
-            $product->setAttributeSetId(4); // 9 is for default
-
+            $product->setAttributeSetId(Mage::getModel('catalog/product')->getDefaultAttributeSetId());
         }
 
         Mage::log("Maestrano_Connec_Helper_Products::mapConnecResourceToModel - mapped product: " . print_r($product->getData(), 1));
