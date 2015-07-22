@@ -5,6 +5,7 @@
     - version.yml
   tags:
     - configuration
+    - update
 
 - name: General | Install Application packages
   apt: "name={{ item }} state=present"
@@ -18,6 +19,7 @@
 
 - name: Magento | Ensure MySQL is running
   command: service mysql start
+  ignore_errors: yes
   tags:
     - configuration
 
@@ -47,11 +49,20 @@
     ssh_opts="-o StrictHostKeyChecking=no"
     update=yes
     force=yes
+  tags:
+    - update
 
 - name: Magento | Current commit hash
   shell: 'git log -n 1 --pretty=format:"%H" > {{ magento_root_path }}/.git-version'
   args:
     chdir: "{{ magento_root_path }}"
+  tags:
+    - update
+
+- name: Git | Ignore files permissions changes
+  command: "git config core.filemode false chdir={{ magento_root_path }}"
+  tags:
+    - update
 
 - name: Magento | Configure Apache virtual host
   template: 

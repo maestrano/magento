@@ -9,3 +9,4 @@ var/session
 var/log
 var/report
 var/_data_sequence
+maestrano.json
