@@ -50,7 +50,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
         array_key_exists('sale_tax_code_id', $product_hash) ? $product->setTaxClassId(2) : $product->setTaxClassId(0); //tax class (0 - none, 1 - default, 2 - taxable, 4 - shipping)
 
         // Set default values only if new object
-        if($this->isNewByConnecId($product_hash['id'])) {
+        // if($this->isNewByConnecId($product_hash['id'])) {
             // Product default visibility
             $product->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
             // Set product stock level on product creation when specified
@@ -70,7 +70,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
             }
 
             $product->setAttributeSetId(Mage::getModel('catalog/product')->getDefaultAttributeSetId());
-        }
+        // }
 
         Mage::log("Maestrano_Connec_Helper_Products::mapConnecResourceToModel - mapped product: " . print_r($product->getData(), 1));
     }
@@ -96,9 +96,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
         if($this->isNewByLocalId($product->getId())) { $product_hash['type'] = 'PURCHASED'; }
 
         // Inventory
-        if (!is_null($product->getStockItem())) {
-            $product_hash['quantity_available'] = $product->getStockItem()->getQty();
-        }
+        if (!is_null($product->getStockItem())) { $product_hash['quantity_available'] = $product->getStockItem()->getQty(); }
 
         Mage::log("Maestrano_Connec_Helper_Products::mapModelToConnecResource - mapped product_hash: " . print_r($product_hash, 1));
 
