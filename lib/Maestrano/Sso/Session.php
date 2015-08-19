@@ -4,13 +4,14 @@
  * Helper class used to check the validity
  * of a Maestrano session
  */
-class Maestrano_Sso_Session
+class Maestrano_Sso_Session extends Maestrano_Util_PresetObject
 {
   private $httpSession = null;
   private $uid = '';
   private $groupUid = '';
   private $sessionToken = '';
   private $recheck = null;
+  protected $preset;
 
   /**
    * Construct the Maestrano_Sso_Session object
@@ -45,6 +46,19 @@ class Maestrano_Sso_Session
   }
 
   /**
+   * @param string $id The ID of the bill to instantiate.
+   * @param string|null $apiToken
+   *
+   * @return Maestrano_Billing_Bill
+   */
+  public static function newWithPreset($preset, &$http_session, $user = null)
+  {
+    $obj = new Maestrano_Sso_Session($http_session, $user, $preset);
+    $obj->_preset = $preset;
+    return $obj;
+  }
+
+  /**
    * Check if the maestrano SSO token exists in the http session
    *
    * @return boolean
@@ -74,23 +88,6 @@ class Maestrano_Sso_Session
      return true;
    }
 
-  /**
-   * Check whether the user infos are instanciated or not
-   *
-   * @return boolean
-   */
-   public function areUserInfosInstanciated()
-   {
-     if ($this->uid != ''
-         && $this->groupUid != ''
-         && $this->sessionToken != ''
-         && $this->recheck != null) {
-       return true;
-     }
-
-     return false;
-   }
-
    /**
     * Return the full url from which session check
     * should be performed
@@ -99,7 +96,7 @@ class Maestrano_Sso_Session
     */
     public function getSessionCheckUrl()
     {
-      $url = Maestrano::sso()->getSessionCheckUrl($this->uid, $this->sessionToken);
+      $url = Maestrano::with($this->_preset)->sso()->getSessionCheckUrl($this->uid, $this->sessionToken);
       return $url;
     }
 
@@ -146,7 +143,7 @@ class Maestrano_Sso_Session
   * @return boolean the validity of the session
   */
   public function isValid($ifSession = false, $httpClient = null) {
-    $svc = Maestrano::sso();
+    $svc = Maestrano::with($this->_preset)->sso();
 
     if (!$svc->isSloEnabled()) return true;
 
@@ -166,16 +163,6 @@ class Maestrano_Sso_Session
     }
   }
 
-  public function getUser() {
-    $userSession = array();
-    $userSession['uid'] = $this->uid;
-    $userSession['group_uid'] = $this->groupUid;
-    $userSession['session'] = $this->sessionToken;
-    $userSession['session_recheck'] = $this->recheck->format(DateTime::ISO8601);
-
-    return $userSession;
-  }
-
   public function save() {
     // Set values
     $sessObj = array();
@@ -188,8 +175,6 @@ class Maestrano_Sso_Session
     $sessionStr = base64_encode($sessionStr);
 
     $this->httpSession['maestrano'] = $sessionStr;
-
-    return $sessionStr;
   }
 
   public function getUid() {
