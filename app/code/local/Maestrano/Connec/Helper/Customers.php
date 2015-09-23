@@ -182,6 +182,8 @@ class Maestrano_Connec_Helper_Customers extends Maestrano_Connec_Helper_BaseMapp
         // Default connec values
         if($this->isNewByLocalId($customer->getId())) {
             $customer_hash['is_customer'] = true;
+            // Create default organization
+            $customer_hash['opts'] = array('create_default_organization' => true);
         }
 
         Mage::log("Maestrano_Connec_Helper_Customers::mapModelToConnecResource - mapped customer_hash: " . print_r($customer_hash, 1));
