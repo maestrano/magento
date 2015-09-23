@@ -53,6 +53,37 @@ class Maestrano_Connec_Helper_Invoices extends Maestrano_Connec_Helper_BaseMappe
         // State
         $invoice_hash['status'] = strtoupper($invoice->getStateName());
 
+        // Address
+        $billingAddress = $invoice->getBillingAddress();
+        $shippingAddress = $invoice->getShippingAddress();
+        $address = array();
+        $billing = array(
+          'attention_first_name' => $billingAddress->getFirstname(),
+          'attention_last_name' => $billingAddress->getLastname(),
+          'line1' => $billingAddress->getStreet(1),
+          'line2' => $billingAddress->getStreet(2),
+          'city' => $billingAddress->getCity(),
+          'postal_code' => $billingAddress->getPostcode(),
+          'region' => $billingAddress->getRegion(),
+          'country' => $billingAddress->getCountry()
+        );
+
+        $shipping = array(
+          'attention_first_name' => $shippingAddress->getFirstname(),
+          'attention_last_name' => $shippingAddress->getLastname(),
+          'line1' => $shippingAddress->getStreet(1),
+          'line2' => $shippingAddress->getStreet(2),
+          'city' => $shippingAddress->getCity(),
+          'postal_code' => $shippingAddress->getPostcode(),
+          'region' => $shippingAddress->getRegion(),
+          'country' => $shippingAddress->getCountry()
+        );
+
+        $address['billing'] = $billing;
+        $address['shipping'] = $shipping;
+        $invoice_hash['address'] = $address;
+
+        // Map invoice items
         $items = $invoice->getAllItems();
         if (count($items) > 0) {
             $invoice_hash['lines'] = array();
