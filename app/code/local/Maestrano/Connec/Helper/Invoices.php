@@ -56,7 +56,6 @@ class Maestrano_Connec_Helper_Invoices extends Maestrano_Connec_Helper_BaseMappe
         // Address
         $billingAddress = $invoice->getBillingAddress();
         $shippingAddress = $invoice->getShippingAddress();
-        $address = array();
         $billing = array(
           'attention_first_name' => $billingAddress->getFirstname(),
           'attention_last_name' => $billingAddress->getLastname(),
@@ -79,9 +78,8 @@ class Maestrano_Connec_Helper_Invoices extends Maestrano_Connec_Helper_BaseMappe
           'country' => $shippingAddress->getCountry()
         );
 
-        $address['billing'] = $billing;
-        $address['shipping'] = $shipping;
-        $invoice_hash['address'] = $address;
+        $invoice_hash['billing_address'] = $billing;
+        $invoice_hash['shipping_address'] = $shipping;
 
         // Map invoice items
         $items = $invoice->getAllItems();

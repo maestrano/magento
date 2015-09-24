@@ -54,7 +54,6 @@ class Maestrano_Connec_Helper_Salesorders extends Maestrano_Connec_Helper_BaseMa
          // Address
         $billingAddress = $order->getBillingAddress();
         $shippingAddress = $order->getShippingAddress();
-        $address = array();
         $billing = array(
           'attention_first_name' => $billingAddress->getFirstname(),
           'attention_last_name' => $billingAddress->getLastname(),
@@ -77,9 +76,8 @@ class Maestrano_Connec_Helper_Salesorders extends Maestrano_Connec_Helper_BaseMa
           'country' => $shippingAddress->getCountry()
         );
 
-        $address['billing'] = $billing;
-        $address['shipping'] = $shipping;
-        $order_hash['address'] = $address;
+        $order_hash['billing_address'] = $billing;
+        $order_hash['shipping_address'] = $shipping;
 
         // Map Sales Order Items
         $items = $order->getAllItems();
