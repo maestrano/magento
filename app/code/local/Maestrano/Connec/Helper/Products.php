@@ -98,7 +98,7 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
         // Inventory
         $stockItem = $product->getStockItem();
         // Update stock only if stock tracking is enabled for this product
-        if($stockItem->getManageStock()) {
+        if($stockItem && $stockItem->getManageStock()) {
           $product_hash['is_inventoried'] = true;
           if (!is_null($product->getStockItem())) { $product_hash['quantity_on_hand'] = $product->getStockItem()->getQty(); }
         }
