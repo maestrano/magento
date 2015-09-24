@@ -4,6 +4,7 @@
 media
 skin
 /app/etc/local.xml
+/app/etc/config.xml
 var/cache
 var/session
 var/log
