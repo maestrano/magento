@@ -37,6 +37,9 @@ class Maestrano_Connec_Helper_Salesorders extends Maestrano_Connec_Helper_BaseMa
     {
         $order_hash = array();
 
+        // Missing transaction lines are considered as deleted by Connec!
+        $order_hash['opts'] = array('sparse' => false);
+
         /** @var Maestrano_Connec_Model_Mnoidmap $mnoIdMapModel */
         $mnoIdMapModel = Mage::getModel('connec/mnoidmap');
 
