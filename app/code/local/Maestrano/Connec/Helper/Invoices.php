@@ -37,6 +37,9 @@ class Maestrano_Connec_Helper_Invoices extends Maestrano_Connec_Helper_BaseMappe
     {
         $invoice_hash = array();
 
+        // Missing transaction lines are considered as deleted by Connec!
+        $invoice_hash['opts'] = array('sparse' => false);
+
         /** @var Maestrano_Connec_Model_Mnoidmap $mnoIdMapModel */
         $mnoIdMapModel = Mage::getModel('connec/mnoidmap');
 
