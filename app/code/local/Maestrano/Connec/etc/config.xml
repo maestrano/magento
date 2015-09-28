@@ -152,6 +152,16 @@
                 </observers>
             </sales_order_invoice_save_after>
 
+            <!-- Payments -->
+            <sales_order_payment_save_commit_after>
+                <observers>
+                    <maestrano_sales_order_payment_save_commit_after>
+                        <class>Maestrano_Connec_Model_PaymentObserver</class>
+                        <method>salesOrderPaymentSaveAfter</method>
+                    </maestrano_sales_order_payment_save_commit_after>
+                </observers>
+            </sales_order_payment_save_commit_after>
+
         </events>
     </global>
 </config> 
