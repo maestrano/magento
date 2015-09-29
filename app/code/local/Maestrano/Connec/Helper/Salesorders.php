@@ -86,34 +86,49 @@ class Maestrano_Connec_Helper_Salesorders extends Maestrano_Connec_Helper_BaseMa
         // Map Sales Order Items
         $items = $order->getAllItems();
         if (count($items) > 0) {
-            $order_hash['lines'] = array();
-            foreach($items as $item) {
-                // If a product is a configured, line are doubled (configured and simple)
-                // We only keep the configured product and interogate db to get simple product id
-                if ($item->getParentItem()) {
-                    continue;
-                }
-
-                // Configurable and simple product both have the simple product sku
-                $product = Mage::getModel('catalog/product')->loadByAttribute('sku', $item->getSku());
-                // Get product mno_id_map
-                $productMnoIdMap = $mnoIdMapModel->findMnoIdMapByLocalIdAndEntityName($product->getId(), Mage::helper('mnomap/products')->getLocalResourceName());
-
-                $line_hash = array();
-
-                $line_hash['item_id'] = $productMnoIdMap['mno_entity_guid'];
-                $line_hash['description'] = $item->getName();
-                $line_hash['quantity'] = $item->getQtyOrdered();
-                $line_hash['unit_price'] = array();
-                $line_hash['unit_price']['total_amount'] = $item->getBasePriceInclTax();
-                $line_hash['unit_price']['tax_rate'] = $item->getTaxPercent();
-                $line_hash['total_price'] = array();
-                $line_hash['total_price']['total_amount'] = $item->getRowTotalInclTax();
-                $line_hash['total_price']['tax_rate'] = $item->getTaxPercent();
-                $line_hash['total_price']['tax_amount'] = $item->getTaxAmount();
-
-                $order_hash['lines'][] = $line_hash;
+          $order_hash['lines'] = array();
+          foreach($items as $item) {
+            // If a product is a configured, line are doubled (configured and simple)
+            // We only keep the configured product and interogate db to get simple product id
+            if ($item->getParentItem()) {
+              continue;
             }
+
+            // Configurable and simple product both have the simple product sku
+            $product = Mage::getModel('catalog/product')->loadByAttribute('sku', $item->getSku());
+            // Get product mno_id_map
+            $productMnoIdMap = $mnoIdMapModel->findMnoIdMapByLocalIdAndEntityName($product->getId(), Mage::helper('mnomap/products')->getLocalResourceName());
+
+            $line_hash = array();
+
+            $line_hash['item_id'] = $productMnoIdMap['mno_entity_guid'];
+            $line_hash['description'] = $item->getName();
+            $line_hash['quantity'] = $item->getQtyOrdered();
+            $line_hash['unit_price'] = array();
+            $line_hash['unit_price']['total_amount'] = $item->getBasePriceInclTax();
+            $line_hash['unit_price']['tax_rate'] = $item->getTaxPercent();
+            $line_hash['total_price'] = array();
+            $line_hash['total_price']['total_amount'] = $item->getRowTotalInclTax();
+            $line_hash['total_price']['tax_rate'] = $item->getTaxPercent();
+            $line_hash['total_price']['tax_amount'] = $item->getTaxAmount();
+
+            $order_hash['lines'][] = $line_hash;
+          }
+        }
+
+        // Add shipment fees if applicable
+        if($order->getShippingAmount() > 0) {
+          $line_hash = array();
+          $line_hash['description'] = "Shipping - " . $order->getShippingDescription();
+          $line_hash['is_shipping'] = true;
+          $line_hash['quantity'] = 1;
+          $line_hash['unit_price'] = array();
+          $line_hash['unit_price']['total_amount'] = $order->getShippingAmount();
+          $line_hash['unit_price']['tax_amount'] = $order->getShippingTaxAmount();
+          $line_hash['total_price'] = array();
+          $line_hash['total_price']['total_amount'] = $order->getShippingAmount();
+          $line_hash['total_price']['tax_amount'] = $order->getShippingTaxAmount();
+          $order_hash['lines'][] = $line_hash;
         }
 
         Mage::log("Maestrano_Connec_Helper_Salesorders::mapModelToConnecResource - mapped order_hash: " . print_r($order_hash, 1));
