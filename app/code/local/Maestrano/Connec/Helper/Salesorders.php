@@ -124,10 +124,10 @@ class Maestrano_Connec_Helper_Salesorders extends Maestrano_Connec_Helper_BaseMa
           $line_hash['quantity'] = 1;
           $line_hash['unit_price'] = array();
           $line_hash['unit_price']['total_amount'] = $order->getShippingAmount();
-          $line_hash['unit_price']['tax_amount'] = $order->getShippingTaxAmount();
+          if($order->getShippingTaxAmount() > 0) { $line_hash['unit_price']['tax_amount'] = $order->getShippingTaxAmount(); }
           $line_hash['total_price'] = array();
           $line_hash['total_price']['total_amount'] = $order->getShippingAmount();
-          $line_hash['total_price']['tax_amount'] = $order->getShippingTaxAmount();
+          if($order->getShippingTaxAmount() > 0) { $line_hash['total_price']['tax_amount'] = $order->getShippingTaxAmount(); }
           $order_hash['lines'][] = $line_hash;
         }
 
