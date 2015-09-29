@@ -125,10 +125,10 @@ class Maestrano_Connec_Helper_Invoices extends Maestrano_Connec_Helper_BaseMappe
           $line_hash['quantity'] = 1;
           $line_hash['unit_price'] = array();
           $line_hash['unit_price']['total_amount'] = $invoice->getShippingAmount();
-          $line_hash['unit_price']['tax_amount'] = $invoice->getShippingTaxAmount();
+          if($invoice->getShippingTaxAmount() > 0) { $line_hash['unit_price']['tax_amount'] = $invoice->getShippingTaxAmount(); }
           $line_hash['total_price'] = array();
           $line_hash['total_price']['total_amount'] = $invoice->getShippingAmount();
-          $line_hash['total_price']['tax_amount'] = $invoice->getShippingTaxAmount();
+          if($invoice->getShippingTaxAmount() > 0) { $line_hash['total_price']['tax_amount'] = $invoice->getShippingTaxAmount(); }
           $invoice_hash['lines'][] = $line_hash;
         }
 
