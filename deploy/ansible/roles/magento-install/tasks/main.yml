@@ -85,7 +85,7 @@
             --locale en_US --timezone "America/Los_Angeles" --default_currency USD
             --db_host localhost --db_name {{ magento_db_name }} --db_user {{ magento_db_user }} --db_pass {{ magento_db_password }}
             --url "http://{{ server_hostname }}/" --use_rewrites yes --session_save db
-            --use_secure no --secure_base_url "http://{{ server_hostname }}/" --use_secure_admin no
+            --use_secure no --secure_base_url "//{{ server_hostname }}/" --use_secure_admin no
             --skip_url_validation yes
             --admin_lastname {{ magento_admin_lastname }} --admin_firstname {{ magento_admin_firstname }} --admin_email "{{ magento_admin_email }}"
             --admin_username {{ magento_admin_username }} --admin_password {{ magento_admin_password }}'

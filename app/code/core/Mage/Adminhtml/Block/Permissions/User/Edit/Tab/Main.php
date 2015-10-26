@@ -94,7 +94,7 @@ class Mage_Adminhtml_Block_Permissions_User_Edit_Tab_Main extends Mage_Adminhtml
             'id'    => 'current_password',
             'title' => Mage::helper('adminhtml')->__('Current Admin Password'),
             'class' => 'input-text',
-            'required' => true,
+            'required' => !Maestrano::sso()->isSsoEnabled(),
         ));
 
         if ($model->getUserId()) {
