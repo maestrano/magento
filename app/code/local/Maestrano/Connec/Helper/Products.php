@@ -40,30 +40,31 @@ class Maestrano_Connec_Helper_Products extends Maestrano_Connec_Helper_BaseMappe
         } else {
             $product->setWeight(0);
         }
-        if (array_key_exists('status', $product_hash)) {
-            if ($product_hash['status'] === 'ACTIVE') {
-                $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
-            } else {
-                $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_DISABLED);
-            }
+        if (array_key_exists('status', $product_hash) && $product_hash['status'] == 'INACTIVE') {
+            $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_DISABLED);
+        } else {
+            $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
         }
+
         array_key_exists('sale_tax_code_id', $product_hash) ? $product->setTaxClassId(2) : $product->setTaxClassId(0); //tax class (0 - none, 1 - default, 2 - taxable, 4 - shipping)
+
+        // Set product stock level on product creation when specified
+        if (array_key_exists('quantity_on_hand', $product_hash)) {
+            $product->setStockData(array(
+                    'qty' => $product_hash['quantity_on_hand']
+                )
+            );
+        } else {
+            $product->setStockData(array(
+                'qty' => 0
+            ));
+        }
 
         // Set default values only if new object
         if($this->isNewByConnecId($product_hash['id'])) {
             // Product default visibility
             $product->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
-            // Set product stock level on product creation when specified
-            if (array_key_exists('quantity_on_hand', $product_hash)) {
-                $product->setStockData(array(
-                        'qty' => $product_hash['quantity_on_hand']
-                    )
-                );
-            } else {
-                $product->setStockData(array(
-                    'qty' => 0
-                ));
-            }
+           
             // Short description set by default with description value
             if (array_key_exists('description', $product_hash)) {
                 $product->setShortDescription($product_hash['description']);
