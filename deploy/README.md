@@ -3,7 +3,7 @@ This version of Magento is customized to provide Single Sing-On and Connec!™ d
 More information on [Maestrano SSO](https://maestrano.com) and [Connec!™ data sharing](https://maestrano.com/connec)
 
 ## Build Docker container with default Magento installation
-`docker build -t alexnoox/magento:latest .`
+`docker build -t maestrano/magento:latest .`
 
 ## Activate Magento customisation on start (SSO and Connec!™ data sharing)
 This is achieved by specifying Maestrano environment variables
