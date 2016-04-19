@@ -232,3 +232,11 @@
         Deny from all
 
     </Files>
+
+
+###########################################
+## Deny access to maestrano.json
+    <Files "maestrano.json">
+      Order Allow,Deny
+      Deny from all
+    </Files>
